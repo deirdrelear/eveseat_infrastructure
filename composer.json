@@ -1,0 +1,36 @@
+{
+    "name": "brutusv/infrastructure",
+    "description": "Infrastructure manager",
+    "license": "MIT",
+    "homepage": "",
+    "authors": [
+        {
+            "name": "Brutus Vulgarus",
+            "email": "br103@yandex.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Brutusv\\Seat\\infrastructure\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.3",
+        "laravel/framework": "^6.2",
+        "eveseat/services": "^4.0",
+        "eveseat/web": "^4.0",
+        "yajra/laravel-datatables-oracle": "^9.10",
+        "yajra/laravel-datatables-buttons": "^4.0",
+        "datatables.net/datatables.net-bs4": "dev-master",
+        "datatables.net/datatables.net-buttons-bs4": "dev-master"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Brutusv\\Seat\\infrastructure\\InfrastructureServiceProvider"
+            ]
+        }
+    }
+}
