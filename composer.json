@@ -2,11 +2,11 @@
     "name": "brutusv/infrastructure",
     "description": "Infrastructure manager",
     "license": "MIT",
-    "homepage": "",
+    "homepage": "https://github.com/DenSL666/infrastructure",
     "authors": [
         {
-            "name": "Brutus Vulgarus",
-            "email": "br103@yandex.ru"
+            "name": "DenSL666",
+            "email": "densl666@yandex.ru"
         }
     ],
     "autoload": {
@@ -17,12 +17,13 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.3",
-        "laravel/framework": "^6.2",
-        "eveseat/services": "^4.0",
-        "eveseat/web": "^4.0",
-        "yajra/laravel-datatables-oracle": "^9.10",
-        "yajra/laravel-datatables-buttons": "^4.0",
+        "php": "^8.2",
+        "laravel/framework": "^10.0",
+        "eveseat/web": "^5.0",
+        "eveseat/eveapi": "^5.0",
+        "eveseat/services": "^5.0.1",
+        "yajra/laravel-datatables-oracle": "^10.4.0",
+        "yajra/laravel-datatables-buttons": "^10.0",
         "datatables.net/datatables.net-bs4": "dev-master",
         "datatables.net/datatables.net-buttons-bs4": "dev-master"
     },
