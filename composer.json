@@ -1,6 +1,7 @@
 {
-    "name": "brutusv/infrastructure",
+    "name": "densl666/infrastructure",
     "description": "Infrastructure manager",
+    "type": "seat-plugin",
     "license": "MIT",
     "homepage": "https://github.com/DenSL666/infrastructure",
     "authors": [
