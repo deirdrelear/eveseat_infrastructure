@@ -2,6 +2,7 @@
     "name": "densl666/infrastructure",
     "description": "Infrastructure manager",
     "type": "seat-plugin",
+    "version": "1.0.0",
     "license": "MIT",
     "homepage": "https://github.com/DenSL666/infrastructure",
     "authors": [
@@ -22,11 +23,7 @@
         "laravel/framework": "^10.0",
         "eveseat/web": "^5.0",
         "eveseat/eveapi": "^5.0",
-        "eveseat/services": "^5.0.1",
-        "yajra/laravel-datatables-oracle": "^10.4.0",
-        "yajra/laravel-datatables-buttons": "^10.0",
-        "datatables.net/datatables.net-bs4": "dev-master",
-        "datatables.net/datatables.net-buttons-bs4": "dev-master"
+        "eveseat/services": "^5.0.1"
     },
     "extra": {
         "laravel": {
