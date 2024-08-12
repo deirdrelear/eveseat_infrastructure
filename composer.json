@@ -2,7 +2,6 @@
     "name": "deirdrelear/eveseat_infrastructure",
     "description": "Infrastructure manager",
     "type": "seat-plugin",
-    "version": "1.0.1",
     "license": "MIT",
     "homepage": "https://github.com/deirdrelear/eveseat_infrastructure",
     "authors": [
