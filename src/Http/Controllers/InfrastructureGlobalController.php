@@ -1,9 +1,9 @@
 <?php
 
 
-namespace Brutusv\Seat\infrastructure\Http\Controllers;
+namespace Deirdrelear\Seat\Infrastructure\Http\Controllers;
 
-use Brutusv\Seat\infrastructure\Service;
+use Deirdrelear\Seat\Infrastructure\Service;
 use Seat\Web\Http\Controllers\Controller;
 
 class InfrastructureGlobalController extends Controller

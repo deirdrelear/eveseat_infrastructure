@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Brutusv\Seat\infrastructure;
+namespace Deirdrelear\Seat\Infrastructure;
 
 
 use Seat\Services\AbstractSeatPlugin;

@@ -1,19 +1,19 @@
 {
-    "name": "densl666/infrastructure",
+    "name": "deirdrelear/eveseat_infrastructure",
     "description": "Infrastructure manager",
     "type": "seat-plugin",
     "version": "1.0.0",
     "license": "MIT",
-    "homepage": "https://github.com/DenSL666/infrastructure",
+    "homepage": "https://github.com/deirdrelear/eveseat_infrastructure",
     "authors": [
         {
-            "name": "DenSL666",
-            "email": "densl666@yandex.ru"
+            "name": "deirdrelear",
+            "email": "dairalir.a1one@gmail.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Brutusv\\Seat\\infrastructure\\": "src/"
+            "deirdrelear\\Seat\\Infrastructure\\": "src/"
         }
     },
     "minimum-stability": "dev",
@@ -28,7 +28,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Brutusv\\Seat\\infrastructure\\InfrastructureServiceProvider"
+                "deirdrelear\\Seat\\Infrastructure\\InfrastructureServiceProvider"
             ]
         }
     }

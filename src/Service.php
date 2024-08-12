@@ -1,6 +1,6 @@
 <?php
 
-namespace Brutusv\Seat\infrastructure;
+namespace Deirdrelear\Seat\Infrastructure;
 
 use DateInterval;
 use DateTime;

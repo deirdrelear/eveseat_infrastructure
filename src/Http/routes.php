@@ -1,7 +1,7 @@
 <?php
 
 Route::group([
-    'namespace'  => 'Brutusv\Seat\infrastructure\Http\Controllers',
+    'namespace'  => 'Deirdrelear\Seat\Infrastructure\Http\Controllers',
     'middleware' => ['web', 'auth', 'locale', 'can:infrastructure.corporation'],
     'prefix' => 'corporation'
 ], function () {
@@ -22,7 +22,7 @@ Route::group([
 });
 
 Route::group([
-    'namespace'  => 'Brutusv\Seat\infrastructure\Http\Controllers',
+    'namespace'  => 'Deirdrelear\Seat\Infrastructure\Http\Controllers',
     'middleware' => ['web', 'auth', 'locale', 'can:infrastructure.alliance'],
     'prefix' => 'alliance'
 ], function () {
@@ -43,7 +43,7 @@ Route::group([
 });
 
 Route::group([
-    'namespace'  => 'Brutusv\Seat\infrastructure\Http\Controllers',
+    'namespace'  => 'Deirdrelear\Seat\Infrastructure\Http\Controllers',
     'middleware' => ['web', 'auth', 'locale', 'can:infrastructure.global'],
     'prefix' => 'global'
 ], function () {
