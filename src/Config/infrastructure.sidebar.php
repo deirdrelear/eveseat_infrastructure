@@ -45,7 +45,7 @@ return [
                 'icon'  => 'fas fa-info',
                 'route' => 'infrastructure.alliance_ihubs',
                 'permission' => 'infrastructure.alliance',
-            ],*/
+            ],
 
             // Global
             [
@@ -65,7 +65,7 @@ return [
                 'icon'  => 'fas fa-info',
                 'route' => 'infrastructure.global_ihubs',
                 'permission' => 'infrastructure.global',
-            ],
+            ],*/
         ]
     ]
 ];
