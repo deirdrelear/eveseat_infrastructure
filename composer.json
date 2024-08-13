@@ -3,6 +3,7 @@
     "description": "Infrastructure manager",
     "type": "seat-plugin",
     "license": "MIT",
+    "version": "1.0.0",
     "homepage": "https://github.com/deirdrelear/eveseat_infrastructure",
     "authors": [
         {
@@ -12,7 +13,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "deirdrelear\\Seat\\Infrastructure\\": "src/"
+            "Deirdrelear\\Seat\\Infrastructure\\": "src/"
         }
     },
     "minimum-stability": "dev",
@@ -27,7 +28,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "deirdrelear\\Seat\\Infrastructure\\InfrastructureServiceProvider"
+                "Deirdrelear\\Seat\\Infrastructure\\InfrastructureServiceProvider"
             ]
         }
     }
