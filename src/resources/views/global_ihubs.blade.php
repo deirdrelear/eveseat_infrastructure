@@ -4,10 +4,11 @@
 @section('page_header', 'Global Infrastructure: IHUB\'s')
 
 @push('head')
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
 @endpush
 
 @section('full')
-    <table class="table table-hover">
+    <table class="table table-striped table-hover" id="globalIhubsTable">
         <thead>
         <tr>
             <th scope="col">Solar System</th>
@@ -30,3 +31,12 @@
         </tbody>
     </table>
 @stop
+
+@push('javascript')
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#globalIhubsTable').DataTable();
+        });
+    </script>
+@endpush
