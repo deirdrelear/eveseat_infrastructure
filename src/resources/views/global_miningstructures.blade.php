@@ -22,7 +22,7 @@
                 <td>{{ $miningStructure->structure_type->typeName }}</td>
                 <td>{{ $miningStructure->name }}</td>
                 <td>{{ $miningStructure->solarSystem->name }}</td>
-                <td></td>
+                <td>{{ $miningStructure->nearest_moon }}</td>
                 <td>{{ $miningStructure->corporation->name }}</td>
                 <td>
                     @foreach($miningStructure->fuels as $fuel)

@@ -312,18 +312,21 @@ class Service
 
     // Возвращает список всех метеноксов
     // Со всеми именами и количествами топлива
-    static public function getMetenoxStructuresInSpace($CorporationsIds = []) {
-        // Сначала получаем все навигационные структуры в космосе
+    static public function getMetenoxStructuresInSpace($CorporationsIds = [])
+    {
+        // Сначала получаем все метеноксы в космосе
         $metenoxStructures = self::getRowMetenoxStructuresInSpace($CorporationsIds);
-
+    
         // Получаем полный список всего топлива
         $fuels = self::getFuels();
-
-        // Добавляем каждое топливо в свою структуру
+    
+        // Добавляем каждое топливо в свою структуру и находим ближайшую луну
         foreach ($metenoxStructures as &$metenoxStructure) {
             $metenoxStructure->fuels = self::findFuelsForStructure($metenoxStructure->item_id, $fuels);
+            $nearest_moon = self::getNearestMoon($metenoxStructure->item_id);
+            $metenoxStructure->nearest_moon = $nearest_moon ? $nearest_moon->name : null;
         }
-
+    
         // Получаем имена и типы для структур и возвращаем результат, заодно преобразуем в массив
         return self::convertCollectionToArray(self::getNamesForStructures($metenoxStructures));
     }
@@ -532,5 +535,45 @@ class Service
 
         return $rowExtractions;
     }
+ 
+    static public function getNearestMoon($structure_id)
+    {
+        // Получаем координаты структуры
+        $structure = DB::table('corporation_assets')
+            ->select('x', 'y', 'z', 'location_id as system_id')
+            ->where('item_id', $structure_id)
+            ->first();
 
+        if (!$structure) {
+            return null;
+        }
+
+        // Получаем все луны в той же солнечной системе
+        $moons = DB::table('moons')
+            ->select('moon_id', 'name', 'x', 'y', 'z')
+            ->where('system_id', $structure->system_id)
+            ->get();
+
+        if ($moons->isEmpty()) {
+            return null;
+        }
+
+        // Находим ближайшую луну
+        $nearest_moon = null;
+        $min_distance = PHP_FLOAT_MAX;
+
+        foreach ($moons as $moon) {
+            $distance = sqrt(
+                pow($moon->x - $structure->x, 2) +
+                pow($moon->y - $structure->y, 2) +
+                pow($moon->z - $structure->z, 2)
+            );
+
+            if ($distance < $min_distance) {
+                $min_distance = $distance;
+                $nearest_moon = $moon;
+            }
+        }
+        return $nearest_moon;
+    }
 }
