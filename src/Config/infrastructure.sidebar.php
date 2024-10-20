@@ -26,6 +26,12 @@ return [
                 'route' => 'infrastructure.corporation_ihubs',
                 'permission' => 'infrastructure.corporation',
             ],
+            [
+                'name'  => 'Corporations Metenoxes',
+                'icon'  => 'fas fa-info',
+                'route' => 'infrastructure.corporation_miningstructures',
+                'permission' => 'infrastructure.corporation',
+            ],
 
             // Alliance
             /*[
@@ -46,6 +52,11 @@ return [
                 'route' => 'infrastructure.alliance_ihubs',
                 'permission' => 'infrastructure.alliance',
             ],
+                        /*[
+                'name'  => 'Alliance Corporations Metenoxes',
+                'icon'  => 'fas fa-info',
+                'route' => 'infrastructure.alliance_miningstructures',
+                'permission' => 'infrastructure.alliance',
 
             // Global
             [
@@ -64,6 +75,12 @@ return [
                 'name'  => 'All IHubs',
                 'icon'  => 'fas fa-info',
                 'route' => 'infrastructure.global_ihubs',
+                'permission' => 'infrastructure.global',
+            ],
+            [
+                'name'  => 'All Metenoxes',
+                'icon'  => 'fas fa-info',
+                'route' => 'infrastructure.global_miningstructures',
                 'permission' => 'infrastructure.global',
             ],*/
         ]

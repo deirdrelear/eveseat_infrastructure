@@ -32,6 +32,14 @@ class InfrastructureGlobalController extends Controller
         return view("infrastructure::global_dockstructures", ['dockingStructures' => $dockingStructures]);
     }
 
+    public function miningstructures() {
+        // Получаем список всех структур с доком
+        $miningStructures = Service::getMiningStructuresInSpace();
+
+        // выводим шаблон
+        return view("infrastructure::global_miningstructures", ['miningStructures' => $miningStructures]);
+    }
+
     public function about() {
         return view("infrastructure::about");
     }

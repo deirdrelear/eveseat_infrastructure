@@ -41,6 +41,17 @@ class InfrastructureAllianceController extends Controller
         return view("infrastructure::alliance_dockstructures", ['dockingStructures' => $dockingStructures]);
     }
 
+    public function miningstructures() {
+        // Получаем идентификаторы корпораций, в которых состоят альты пользователя
+        $userCorporationsIds = Service::getUserCorporationsIds();
+
+        // Получаем список структур с доком для заданных корпораций
+        $miningStructures = Service::getMiningStructuresInSpace($userCorporationsIds);
+
+        // выводим шаблон
+        return view("infrastructure::alliance_miningstructures", ['miningStructures' => $miningStructures]);
+    }
+
     public function about() {
         return view("infrastructure::about");
     }

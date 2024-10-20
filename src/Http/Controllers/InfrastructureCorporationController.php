@@ -67,4 +67,24 @@ class InfrastructureCorporationController extends Controller
         // выводим шаблон
         return view("infrastructure::alliance_dockstructures", ['corporationNames' => $corporationNames,'dockingStructures' => $dockingStructures]);
     }
+
+    public function miningstructures() {
+        // Получаем идентификаторы корпораций, в которых состоят альты пользователя
+        $userCorporationsIds = Service::getUserCorporationsIds();
+
+        // Получаем список структур с доком для заданных корпораций
+        $miningStructures = Service::getMiningStructuresInSpace($userCorporationsIds);
+
+        // Получаем список корпораций для разделов
+        $corporationNames = [];
+        foreach ($miningStructures as $miningStructure) {
+            $corporationNames[$miningStructure->corporation->corporation_id] = $miningStructure->corporation->name;
+        }
+
+        // оставляем только уникальные элементы корпораций
+        $corporationNames = array_unique($corporationNames);
+
+        // выводим шаблон
+        return view("infrastructure::alliance_dockstructures", ['corporationNames' => $corporationNames,'miningStructures' => $miningStructures]);
+    }
 }
