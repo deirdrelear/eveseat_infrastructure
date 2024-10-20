@@ -1,12 +1,9 @@
-@extends('web::layouts.grids.12')
+@extends('infrastructure::layouts.app')
 
-@section('title', 'Corporation Infrastructure: Navigation Structures')
-@section('page_header', 'Corporation Infrastructure: Navigation Structures')
+@section('infrastructure_title', 'Corporation Infrastructure: Navigation Structures')
+@section('infrastructure_page_header', 'Corporation Infrastructure: Navigation Structures')
 
-@push('head')
-@endpush
-
-@section('full')
+@section('infrastructure_content')
     @if(count($navigationStructures) > 0)
         <!-- Сначала выводим табы с именами корпораций -->
         @foreach($corporationNames as $corporationId => $corporationName)
@@ -55,4 +52,4 @@
             </div>
         @endforeach
     @endif
-@stop
+@endsection
