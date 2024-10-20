@@ -4,8 +4,13 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
 @endpush
 
-@section('title', @yield('infrastructure_title'))
-@section('page_header', @yield('infrastructure_page_header'))
+@section('title')
+    @yield('infrastructure_title')
+@endsection
+
+@section('page_header')
+    @yield('infrastructure_page_header')
+@endsection
 
 @section('full')
     @yield('infrastructure_content')
