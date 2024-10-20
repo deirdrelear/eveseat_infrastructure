@@ -3,44 +3,26 @@ $(document).ready(function() {
 
     var currentUrl = window.location.pathname;
 
-    function setActiveMenu(menuSelector, submenuSelector) {
+    function setActiveMenu() {
+        // Удаляем все активные классы
         $('.nav-sidebar .nav-item').removeClass('menu-open');
         $('.nav-sidebar .nav-link').removeClass('active');
 
-        var menuItem = $(menuSelector);
-        menuItem.closest('.nav-item').addClass('menu-open');
-        menuItem.addClass('active');
-
-        if (submenuSelector) {
-            $(submenuSelector).addClass('active');
-        }
-
-        localStorage.setItem('activeMenu', menuSelector);
-        localStorage.setItem('activeSubmenu', submenuSelector);
-    }
-
-    function getSubmenuSelector(url) {
-        if (url.includes('/ihubs')) {
-            return 'a[href$="/ihubs"]';
-        } else if (url.includes('/navstructures')) {
-            return 'a[href$="/navstructures"]';
-        } else if (url.includes('/dockstructures')) {
-            return 'a[href$="/dockstructures"]';
-        } else if (url.includes('/miningstructures')) {
-            return 'a[href$="/miningstructures"]';
-        }
-        return null;
-    }
-
-    if (currentUrl.includes('/infrastructure/')) {
-        var menuSelector = 'a[href*="/infrastructure"]';
-        var submenuSelector = getSubmenuSelector(currentUrl);
-        setActiveMenu(menuSelector, submenuSelector);
-    } else {
-        var activeMenu = localStorage.getItem('activeMenu');
-        var activeSubmenu = localStorage.getItem('activeSubmenu');
-        if (activeMenu) {
-            setActiveMenu(activeMenu, activeSubmenu);
+        // Находим текущий активный пункт меню
+        var activeLink = $('.nav-sidebar .nav-link[href="' + currentUrl + '"]');
+        
+        if (activeLink.length) {
+            // Активируем текущий пункт меню
+            activeLink.addClass('active');
+            
+            // Активируем родительский пункт меню, если есть
+            var parentItem = activeLink.closest('.nav-item.has-treeview');
+            if (parentItem.length) {
+                parentItem.addClass('menu-open');
+                parentItem.find('> .nav-link').addClass('active');
+            }
         }
     }
+
+    setActiveMenu();
 });
