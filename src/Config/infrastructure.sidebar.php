@@ -34,7 +34,7 @@ return [
             ],
 
             // Alliance
-            /*[
+            [
                 'name'  => 'Alliance Corporations Stations',
                 'icon'  => 'fas fa-info',
                 'route' => 'infrastructure.alliance_dockstructures',
@@ -52,12 +52,13 @@ return [
                 'route' => 'infrastructure.alliance_ihubs',
                 'permission' => 'infrastructure.alliance',
             ],
-                        /*[
+            [
                 'name'  => 'Alliance Corporations Metenoxes',
                 'icon'  => 'fas fa-info',
                 'route' => 'infrastructure.alliance_miningstructures',
                 'permission' => 'infrastructure.alliance',
-
+            
+            /*
             // Global
             [
                 'name'  => 'All Stations',
