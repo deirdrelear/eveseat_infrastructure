@@ -85,6 +85,6 @@ class InfrastructureCorporationController extends Controller
         $corporationNames = array_unique($corporationNames);
 
         // выводим шаблон
-        return view("infrastructure::alliance_dockstructures", ['corporationNames' => $corporationNames,'miningStructures' => $miningStructures]);
+        return view("infrastructure::alliance_miningstructures", ['corporationNames' => $corporationNames,'miningStructures' => $miningStructures]);
     }
 }
