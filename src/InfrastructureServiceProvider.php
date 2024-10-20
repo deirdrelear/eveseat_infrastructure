@@ -42,7 +42,7 @@ class InfrastructureServiceProvider extends AbstractSeatPlugin
         //$this->add_translations();
     
         $this->publishes([
-            __DIR__.'/../resources/js' => public_path('vendor/infrastructure/js'),
+            __DIR__.'/resources/js' => public_path('vendor/infrastructure/js'),
         ], 'public');
     }
 
@@ -65,7 +65,7 @@ class InfrastructureServiceProvider extends AbstractSeatPlugin
     {
         return [
             'publishes' => [
-                __DIR__.'/../resources/js' => public_path('vendor/infrastructure/js'),
+                __DIR__.'/resources/js' => public_path('vendor/infrastructure/js'),
         ],
     ];
 }
