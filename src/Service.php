@@ -12,6 +12,7 @@ class Service
     const FUEL_TYPES_ID_LIST = [16273, 4247, 4312, 4051, 4246];
     const DOCKING_STRUCTURES_TYPES_ID_LIST = [35835, 35836, 35825, 35826, 35827, 35832, 35833, 35834, 47512, 47513, 47514, 47515, 47516];
     const NAVIGATION_STRUCTURES_TYPES_ID_LIST = [35841, 35840, 37534];
+    const MINING_STRUCTURES_TYPES_ID_LIST = [81826];
 
     // Возвращает все корпорации и альянсы, в которых состоят альты пользователя
     static public function getUserCorporationsIds() {
@@ -481,5 +482,32 @@ class Service
         }
 
         return $rowExtractions;
+    }
+
+    static public function getMiningStructuresInSpace($CorporationsIds = []) {
+        // Сначала получаем все добывающие структуры в космосе
+        $miningStructures = self::getRowMiningStructuresInSpace($CorporationsIds);
+    
+        // Получаем полный список всего топлива
+        $fuels = self::getFuels();
+    
+        // Добавляем каждое топливо в свою структуру
+        foreach ($miningStructures as &$miningStructure) {
+            $miningStructure->fuels = self::findFuelsForStructure($miningStructure->item_id, $fuels);
+        }
+    
+        // Получаем имена и типы для структур и возвращаем результат
+        return self::getNamesForStructures($miningStructures);
+    }
+    
+    static private function getRowMiningStructuresInSpace($CorporationsIds = []) {
+        $query = DB::table('corporation_structures')
+            ->whereIn('type_id', self::MINING_STRUCTURES_TYPES_ID_LIST);
+    
+        if (count($CorporationsIds) > 0) {
+            $query->whereIn('corporation_id', $CorporationsIds);
+        }
+    
+        return $query->get();
     }
 }

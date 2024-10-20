@@ -19,6 +19,11 @@ Route::group([
         'as'   => 'infrastructure.corporation_ihubs',
         'uses' => 'InfrastructureCorporationController@ihubs',
     ]);
+
+    Route::get('miningstructures', [
+        'as'   => 'infrastructure.corporation_miningstructures',
+        'uses' => 'InfrastructureCorporationController@miningstructures',
+    ]);
 });
 
 Route::group([
@@ -40,6 +45,11 @@ Route::group([
         'as'   => 'infrastructure.alliance_ihubs',
         'uses' => 'InfrastructureAllianceController@ihubs',
     ]);
+
+    Route::get('miningstructures', [
+        'as'   => 'infrastructure.alliance_miningstructures',
+        'uses' => 'InfrastructureAllianceController@miningstructures',
+    ]);
 });
 
 Route::group([
@@ -60,5 +70,10 @@ Route::group([
     Route::get('ihubs', [
         'as'   => 'infrastructure.global_ihubs',
         'uses' => 'InfrastructureGlobalController@ihubs',
+    ]);
+
+    Route::get('miningstructures', [
+        'as'   => 'infrastructure.global_miningstructures',
+        'uses' => 'InfrastructureGlobalController@miningstructures',
     ]);
 });
