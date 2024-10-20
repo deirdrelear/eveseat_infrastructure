@@ -57,7 +57,7 @@ return [
                 'icon'  => 'fas fa-info',
                 'route' => 'infrastructure.alliance_miningstructures',
                 'permission' => 'infrastructure.alliance',
-            
+            ],
             /*
             // Global
             [
