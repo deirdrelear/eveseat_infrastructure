@@ -73,7 +73,7 @@ class InfrastructureCorporationController extends Controller
         $userCorporationsIds = Service::getUserCorporationsIds();
 
         // Получаем список структур с доком для заданных корпораций
-        $miningStructures = Service::getMiningStructuresInSpace($userCorporationsIds);
+        $miningStructures = Service:::getMetenoxStructuresInSpace($userCorporationsIds);
 
         // Получаем список корпораций для разделов
         $corporationNames = [];
