@@ -25,26 +25,5 @@ $(document).ready(function() {
         }
     }
 
-    // ПРИМЕЧАНИЕ: Удаляем или комментируем код, связанный с sidebar-collapse
-    /*
-    var menuState = localStorage.getItem('menuState');
-    console.log('Initial menu state:', menuState);
-
-    if (menuState === 'expanded') {
-        $('body').removeClass('sidebar-collapse');
-    } else if (menuState === 'collapsed') {
-        $('body').addClass('sidebar-collapse');
-    }
-
-    // Слушатели событий для изменения состояния меню
-    $(document).on('collapsed.lte.pushmenu', function () {
-        console.log('Menu collapsed');
-        localStorage.setItem('menuState', 'collapsed');
-    });
-
-    $(document).on('expanded.lte.pushmenu', function () {
-        console.log('Menu expanded');
-        localStorage.setItem('menuState', 'expanded');
-    });
-    */
+    // Убедитесь, что не выполняется сворачивание бокового меню
 });
