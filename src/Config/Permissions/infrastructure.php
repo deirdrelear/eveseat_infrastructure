@@ -11,11 +11,11 @@ return [
         'description' => 'Shows player characters corporations infrastructure information',
         'division'    => 'industrial',
     ],
-    /*'alliance' => [
+    'alliance' => [
         'label'       => 'Alliance Infrastructure',
         'description' => 'Shows player alliances corporations infrastructure information',
         'division'    => 'industrial',
-    ],*/
+    ],
     'global' => [
         'label'       => 'Global Infrastructure',
         'description' => 'Shows global corporations infrastructure information',
