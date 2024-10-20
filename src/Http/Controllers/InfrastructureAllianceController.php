@@ -45,8 +45,8 @@ class InfrastructureAllianceController extends Controller
         // Получаем идентификаторы корпораций, в которых состоят альты пользователя
         $userCorporationsIds = Service::getUserCorporationsIds();
 
-        // Получаем список структур с доком для заданных корпораций
-        $miningStructures = Service::getMiningStructuresInSpace($userCorporationsIds);
+        // Получаем список метеноксов для заданных корпораций
+        $miningStructures = Service::getMetenoxStructuresInSpace($userCorporationsIds);
 
         // выводим шаблон
         return view("infrastructure::alliance_miningstructures", ['miningStructures' => $miningStructures]);
