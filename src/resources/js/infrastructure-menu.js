@@ -7,40 +7,40 @@ $(document).ready(function() {
         $('.nav-sidebar .nav-item').removeClass('menu-open');
         $('.nav-sidebar .nav-link').removeClass('active');
 
-        var menuItem = $(menuSelector).closest('.nav-item');
-        menuItem.addClass('menu-open');
-        menuItem.find('> a.nav-link').addClass('active');
+        var menuItem = $(menuSelector);
+        menuItem.closest('.nav-item').addClass('menu-open');
+        menuItem.addClass('active');
 
         if (submenuSelector) {
-            menuItem.find(submenuSelector).addClass('active');
+            $(submenuSelector).addClass('active');
         }
 
-        // Сохраняем состояние в localStorage
         localStorage.setItem('activeMenu', menuSelector);
         localStorage.setItem('activeSubmenu', submenuSelector);
     }
 
-    function restoreMenuState() {
+    function getSubmenuSelector(url) {
+        if (url.includes('/ihubs')) {
+            return 'a[href$="/ihubs"]';
+        } else if (url.includes('/navstructures')) {
+            return 'a[href$="/navstructures"]';
+        } else if (url.includes('/dockstructures')) {
+            return 'a[href$="/dockstructures"]';
+        } else if (url.includes('/miningstructures')) {
+            return 'a[href$="/miningstructures"]';
+        }
+        return null;
+    }
+
+    if (currentUrl.includes('/infrastructure/')) {
+        var menuSelector = 'a[href*="/infrastructure"]';
+        var submenuSelector = getSubmenuSelector(currentUrl);
+        setActiveMenu(menuSelector, submenuSelector);
+    } else {
         var activeMenu = localStorage.getItem('activeMenu');
         var activeSubmenu = localStorage.getItem('activeSubmenu');
         if (activeMenu) {
             setActiveMenu(activeMenu, activeSubmenu);
         }
-    }
-
-    if (currentUrl.startsWith('/infrastructure/')) {
-        var submenuSelector = null;
-        if (currentUrl.includes('/ihubs')) {
-            submenuSelector = 'a[href*="ihubs"]';
-        } else if (currentUrl.includes('/navstructures')) {
-            submenuSelector = 'a[href*="navstructures"]';
-        } else if (currentUrl.includes('/dockstructures')) {
-            submenuSelector = 'a[href*="dockstructures"]';
-        } else if (currentUrl.includes('/miningstructures')) {
-            submenuSelector = 'a[href*="miningstructures"]';
-        }
-        setActiveMenu('a[href*="/infrastructure"]', submenuSelector);
-    } else {
-        restoreMenuState();
     }
 });
