@@ -12,8 +12,11 @@ class InfrastructureAllianceController extends Controller
         // Получаем идентификаторы корпораций, в которых состоят альты пользователя
         $userCorporationsIds = Service::getUserCorporationsIds();
 
-        // получаем список ihub'ов нужных корпораций
-        $ihubs = Service::getIHubsInSpace($userCorporationsIds);
+        // Получаем идентификаторы альянсов, в которых состоят альты пользователя
+        $allianceCorporationsIds = Service::getAllianceCorporationsIds($userCorporationsIds);
+
+        // получаем список ihub'ов нужных альянсов
+        $ihubs = Service::getIHubsInSpace($allianceCorporationsIds);
 
         // выводим шаблон
         return view("infrastructure::alliance_ihubs", ['ihubs' => $ihubs]);
@@ -23,8 +26,11 @@ class InfrastructureAllianceController extends Controller
         // Получаем идентификаторы корпораций, в которых состоят альты пользователя
         $userCorporationsIds = Service::getUserCorporationsIds();
 
-        // Получаем список навигационных структур нужных корпораций
-        $navigationStructures = Service::getNavigationStructuresInSpace($userCorporationsIds);
+        // Получаем идентификаторы альянсов, в которых состоят альты пользователя
+        $allianceCorporationsIds = Service::getAllianceCorporationsIds($userCorporationsIds);
+
+        // Получаем список навигационных структур нужных альянсов
+        $navigationStructures = Service::getNavigationStructuresInSpace($allianceCorporationsIds);
 
         // выводим шаблон
         return view("infrastructure::alliance_navstructures", ['navigationStructures' => $navigationStructures]);
@@ -34,8 +40,11 @@ class InfrastructureAllianceController extends Controller
         // Получаем идентификаторы корпораций, в которых состоят альты пользователя
         $userCorporationsIds = Service::getUserCorporationsIds();
 
-        // Получаем список структур с доком для заданных корпораций
-        $dockingStructures = Service::getDockingStructuresInSpace($userCorporationsIds);
+        // Получаем идентификаторы альянсов, в которых состоят альты пользователя
+        $allianceCorporationsIds = Service::getAllianceCorporationsIds($userCorporationsIds);
+
+        // Получаем список структур с доком для заданных альянсов
+        $dockingStructures = Service::getDockingStructuresInSpace($allianceCorporationsIds);
 
         // выводим шаблон
         return view("infrastructure::alliance_dockstructures", ['dockingStructures' => $dockingStructures]);
@@ -45,8 +54,10 @@ class InfrastructureAllianceController extends Controller
         // Получаем идентификаторы корпораций, в которых состоят альты пользователя
         $userCorporationsIds = Service::getUserCorporationsIds();
 
+        // Получаем идентификаторы альянсов, в которых состоят альты пользователя
         $allianceCorporationsIds = Service::getAllianceCorporationsIds($userCorporationsIds);
-        // Получаем список метеноксов для заданных корпораций
+
+        // Получаем список метеноксов для заданных альянсов
         $miningStructures = Service::getMetenoxStructuresInSpace($allianceCorporationsIds);
 
         // выводим шаблон
