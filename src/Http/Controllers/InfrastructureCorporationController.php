@@ -25,7 +25,7 @@ class InfrastructureCorporationController extends Controller
         $corporationNames = array_unique($corporationNames);
 
         // выводим шаблон
-        return view("infrastructure::alliance_ihubs", ['corporationNames' => $corporationNames,'ihubs' => $ihubs]);
+        return view("infrastructure::corporation_ihubs", ['corporationNames' => $corporationNames,'ihubs' => $ihubs]);
     }
 
     public function navstructures() {
@@ -45,7 +45,7 @@ class InfrastructureCorporationController extends Controller
         $corporationNames = array_unique($corporationNames);
 
         // выводим шаблон
-        return view("infrastructure::alliance_navstructures", ['corporationNames' => $corporationNames,'navigationStructures' => $navigationStructures]);
+        return view("infrastructure::corporation_navstructures", ['corporationNames' => $corporationNames,'navigationStructures' => $navigationStructures]);
     }
 
     public function dockstructures() {
@@ -65,7 +65,7 @@ class InfrastructureCorporationController extends Controller
         $corporationNames = array_unique($corporationNames);
 
         // выводим шаблон
-        return view("infrastructure::alliance_dockstructures", ['corporationNames' => $corporationNames,'dockingStructures' => $dockingStructures]);
+        return view("infrastructure::corporation_dockstructures", ['corporationNames' => $corporationNames,'dockingStructures' => $dockingStructures]);
     }
 
     public function miningstructures() {
@@ -85,6 +85,6 @@ class InfrastructureCorporationController extends Controller
         $corporationNames = array_unique($corporationNames);
 
         // выводим шаблон
-        return view("infrastructure::alliance_miningstructures", ['corporationNames' => $corporationNames,'miningStructures' => $miningStructures]);
+        return view("infrastructure::corporation_miningstructures", ['corporationNames' => $corporationNames,'miningStructures' => $miningStructures]);
     }
 }
