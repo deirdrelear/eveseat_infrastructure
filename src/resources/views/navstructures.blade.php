@@ -1,12 +1,9 @@
-@extends('web::layouts.grids.12')
+@extends('infrastructure::layouts.app')
 
-@section('title', 'title')
-@section('page_header', 'Infrastructure: Navigation Structures')
+@section('infrastructure_title', 'Infrastructure: Navigation Structures')
+@section('infrastructure_page_header', 'Infrastructure: Navigation Structures')
 
-@push('head')
-@endpush
-
-@section('full')
+@section('infrastructure_content')
     @foreach($navigationStructures as $navigationStructure)
         <h3>{{ $navigationStructure->structure_type->typeName }} {{ $navigationStructure->name }}</h3>
         Solar System: {{ $navigationStructure->solarSystem->name }}<br>
@@ -17,4 +14,4 @@
         @endforeach
         <hr>
     @endforeach
-@stop
+@endsection

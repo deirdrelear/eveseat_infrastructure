@@ -1,12 +1,9 @@
-@extends('web::layouts.grids.12')
+@extends('infrastructure::layouts.app')
 
-@section('title', 'title')
-@section('page_header', 'Infrastructure: Stations')
+@section('infrastructure_title', 'Infrastructure: Stations')
+@section('infrastructure_page_header', 'Infrastructure: Stations')
 
-@push('head')
-@endpush
-
-@section('full')
+@section('infrastructure_content')
     @foreach($dockingStructures as $dockingStructure)
         <h3>{{ $dockingStructure->structure_type->typeName }} {{ $dockingStructure->name }}</h3>
         Solar System: {{ $dockingStructure->solarSystem->name }}<br>
@@ -17,4 +14,4 @@
         @endforeach
         <hr>
     @endforeach
-@stop
+@endsection

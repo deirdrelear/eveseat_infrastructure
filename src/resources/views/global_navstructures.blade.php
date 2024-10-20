@@ -1,13 +1,9 @@
-@extends('web::layouts.grids.12')
+@extends('infrastructure::layouts.app')
 
-@section('title', 'Global Infrastructure: Navigation Structures')
-@section('page_header', 'Global Infrastructure: Navigation Structures')
+@section('infrastructure_title', 'Global Infrastructure: Navigation Structures')
+@section('infrastructure_page_header', 'Global Infrastructure: Navigation Structures')
 
-@push('head')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
-@endpush
-
-@section('full')
+@section('infrastructure_content')
     <table class="table table-striped table-hover" id="globalNavigationStructuresTable">
         <thead>
         <tr>
@@ -34,13 +30,4 @@
         @endforeach
         </tbody>
     </table>
-@stop
-
-@push('javascript')
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#globalNavigationStructuresTable').DataTable();
-        });
-    </script>
-@endpush
+@endsection

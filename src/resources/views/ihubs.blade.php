@@ -1,12 +1,9 @@
-@extends('web::layouts.grids.12')
+@extends('infrastructure::layouts.app')
 
-@section('title', 'title')
-@section('page_header', 'Infrastructure: IHUB\'s')
+@section('infrastructure_title', 'Infrastructure: IHUB\'s')
+@section('infrastructure_page_header', 'Infrastructure: IHUB\'s')
 
-@push('head')
-@endpush
-
-@section('full')
+@section('infrastructure_content')
     @foreach($ihubs as $ihub)
         <h3>System: {{ $ihub->solarSystem->name }}</h3>
         Corporation: {{ $ihub->corporation->name }}<br>
@@ -17,4 +14,4 @@
         @endforeach
         <hr>
     @endforeach
-@stop
+@endsection

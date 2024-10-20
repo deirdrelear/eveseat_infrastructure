@@ -1,13 +1,9 @@
-@extends('web::layouts.grids.12')
+@extends('infrastructure::layouts.app')
 
-@section('title', 'Alliance Infrastructure: IHUB\'s')
-@section('page_header', 'Alliance Infrastructure: IHUB\'s')
+@section('infrastructure_title', 'Alliance Infrastructure: IHUB\'s')
+@section('infrastructure_page_header', 'Alliance Infrastructure: IHUB\'s')
 
-@push('head')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
-@endpush
-
-@section('full')
+@section('infrastructure_content')
     <table class="table table-striped table-hover" id="allianceIhubsTable">
         <thead>
         <tr>
@@ -30,13 +26,4 @@
         @endforeach
         </tbody>
     </table>
-@stop
-
-@push('javascript')
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#allianceIhubsTable').DataTable();
-        });
-    </script>
-@endpush
+@endsection

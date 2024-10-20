@@ -1,13 +1,9 @@
-@extends('web::layouts.grids.12')
+@extends('infrastructure::layouts.app')
 
-@section('title', 'Alliance Infrastructure: Metenoxes')
-@section('page_header', 'Alliance Infrastructure: Metenoxes')
+@section('infrastructure_title', 'Alliance Infrastructure: Metenoxes')
+@section('infrastructure_page_header', 'Alliance Infrastructure: Metenoxes')
 
-@push('head')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
-@endpush
-
-@section('full')
+@section('infrastructure_content')
     <table class="table table-striped table-hover" id="allianceminingStructuresTable">
         <thead>
         <tr>
@@ -35,13 +31,5 @@
         </tbody>
     </table>
     <div class="container">
-@stop
+@endsection
 
-@push('javascript')
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#allianceminingStructuresTable').DataTable();
-        });
-    </script>
-@endpush
