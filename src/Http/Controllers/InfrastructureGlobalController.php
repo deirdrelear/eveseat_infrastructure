@@ -34,7 +34,7 @@ class InfrastructureGlobalController extends Controller
 
     public function miningstructures() {
         // Получаем список всех структур с доком
-        $miningStructures = Service::getMiningStructuresInSpace();
+        $miningStructures = Service::getMetenoxStructuresInSpace();
 
         // выводим шаблон
         return view("infrastructure::global_miningstructures", ['miningStructures' => $miningStructures]);
