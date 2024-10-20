@@ -64,7 +64,4 @@ class InfrastructureAllianceController extends Controller
         return view("infrastructure::alliance_miningstructures", ['miningStructures' => $miningStructures]);
     }
 
-    public function about() {
-        return view("infrastructure::about");
-    }
 }

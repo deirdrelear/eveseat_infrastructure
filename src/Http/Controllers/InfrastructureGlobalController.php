@@ -40,7 +40,4 @@ class InfrastructureGlobalController extends Controller
         return view("infrastructure::global_miningstructures", ['miningStructures' => $miningStructures]);
     }
 
-    public function about() {
-        return view("infrastructure::about");
-    }
 }
