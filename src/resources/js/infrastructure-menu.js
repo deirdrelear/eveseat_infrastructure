@@ -4,26 +4,37 @@ $(document).ready(function() {
     // Получаем текущий URL
     var currentUrl = window.location.pathname;
 
-    // Проверяем, находится ли пользователь на странице плагина Infrastructure
-    if (currentUrl.includes('/infrastructure/')) { // Замените '/infrastructure/' на актуальную часть URL, если отличается
-        // Находим элемент меню Infrastructure по ссылке
-        var infrastructureMenu = $('a[href*="infrastructure"]').closest('.nav-item');
+    // Функция для установки активного пункта меню
+    function setActiveMenu(menuSelector, submenuSelector) {
+        // Убираем классы active и menu-open с остальных пунктов меню
+        $('.nav-sidebar .nav-item').removeClass('menu-open');
+        $('.nav-sidebar .nav-link').removeClass('active');
 
-        // Добавляем классы для открытия секции меню
-        infrastructureMenu.addClass('menu-open');
-        infrastructureMenu.find('a.nav-link').addClass('active');
+        // Находим и активируем нужный пункт меню
+        var menuItem = $(menuSelector).closest('.nav-item');
+        menuItem.addClass('menu-open');
+        menuItem.find('> a.nav-link').addClass('active');
 
-        // Устанавливаем активным соответствующий пункт подменю
-        if (currentUrl.includes('/infrastructure/ihubs')) {
-            infrastructureMenu.find('a[href*="ihubs"]').addClass('active');
-        } else if (currentUrl.includes('/infrastructure/navstructures')) {
-            infrastructureMenu.find('a[href*="navstructures"]').addClass('active');
-        } else if (currentUrl.includes('/infrastructure/dockstructures')) {
-            infrastructureMenu.find('a[href*="dockstructures"]').addClass('active');
-        } else if (currentUrl.includes('/infrastructure/miningstructures')) {
-            infrastructureMenu.find('a[href*="miningstructures"]').addClass('active');
+        // Активируем подменю, если оно есть
+        if (submenuSelector) {
+            menuItem.find(submenuSelector).addClass('active');
         }
     }
 
-    // Убедитесь, что не выполняется сворачивание бокового меню
+    // Определяем, находимся ли мы в разделе Infrastructure
+    if (currentUrl.startsWith('/infrastructure/')) {
+        // Устанавливаем активным главный пункт меню Infrastructure
+        setActiveMenu('a[href*="/infrastructure"]', null);
+
+        // Определяем активное подменю
+        if (currentUrl.includes('/ihubs')) {
+            setActiveMenu('a[href*="/infrastructure"]', 'a[href*="ihubs"]');
+        } else if (currentUrl.includes('/navstructures')) {
+            setActiveMenu('a[href*="/infrastructure"]', 'a[href*="navstructures"]');
+        } else if (currentUrl.includes('/dockstructures')) {
+            setActiveMenu('a[href*="/infrastructure"]', 'a[href*="dockstructures"]');
+        } else if (currentUrl.includes('/miningstructures')) {
+            setActiveMenu('a[href*="/infrastructure"]', 'a[href*="miningstructures"]');
+        }
+    }
 });

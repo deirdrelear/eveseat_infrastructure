@@ -3,7 +3,7 @@
 Route::group([
     'namespace'  => 'Deirdrelear\Seat\Infrastructure\Http\Controllers',
     'middleware' => ['web', 'auth', 'locale', 'can:infrastructure.corporation'],
-    'prefix' => 'corporation'
+    'prefix' => 'infrastructure/corporation'
 ], function () {
     Route::get('dockstructures', [
         'as'   => 'infrastructure.corporation_dockstructures',
@@ -29,7 +29,7 @@ Route::group([
 Route::group([
     'namespace'  => 'Deirdrelear\Seat\Infrastructure\Http\Controllers',
     'middleware' => ['web', 'auth', 'locale', 'can:infrastructure.alliance'],
-    'prefix' => 'alliance'
+    'prefix' => 'infrastructure/alliance'
 ], function () {
     Route::get('dockstructures', [
         'as'   => 'infrastructure.alliance_dockstructures',
@@ -55,7 +55,7 @@ Route::group([
 Route::group([
     'namespace'  => 'Deirdrelear\Seat\Infrastructure\Http\Controllers',
     'middleware' => ['web', 'auth', 'locale', 'can:infrastructure.global'],
-    'prefix' => 'global'
+    'prefix' => 'infrastructure/global'
 ], function () {
     Route::get('dockstructures', [
         'as'   => 'infrastructure.global_dockstructures',
