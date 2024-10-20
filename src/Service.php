@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\DB;
 
 class Service
 {
-    const FUEL_TYPES_ID_LIST = [16273, 4247, 4312, 4051, 4246];
+    const FUEL_TYPES_ID_LIST = [16273, 4247, 4312, 4051, 4246, 81143, 81144];
     const DOCKING_STRUCTURES_TYPES_ID_LIST = [35835, 35836, 35825, 35826, 35827, 35832, 35833, 35834, 47512, 47513, 47514, 47515, 47516];
     const NAVIGATION_STRUCTURES_TYPES_ID_LIST = [35841, 35840, 37534];
     const METENOX_STRUCTURES_TYPES_ID_LIST = [81826];
 
-    // Возвращает все корпорации и альянсы, в которых состоят альты пользователя
+    // Возвращает все корпорации, в которых состоят альты пользователя
     static public function getUserCorporationsIds() {
         // Сначала получаем идентификаторы персонажей, связанных с текущим пользователем.
         $userCharactersIds = auth()->user()->associatedCharacterIds();
@@ -31,6 +31,20 @@ class Service
         }
 
         return $res;
+    }
+
+    // Возвращает все альянсы, в которых состоят альты пользователя
+    static public function getAllianceCorporationsIds($userCorporationsIds) {
+        $allianceIds = DB::table('corporation_infos')
+            ->whereIn('corporation_id', $userCorporationsIds)
+            ->whereNotNull('alliance_id')
+            ->pluck('alliance_id')
+            ->unique();
+    
+        return DB::table('corporation_infos')
+            ->whereIn('alliance_id', $allianceIds)
+            ->pluck('corporation_id')
+            ->toArray();
     }
 
     // Возвращает все iHub в космосе в сыром виде
