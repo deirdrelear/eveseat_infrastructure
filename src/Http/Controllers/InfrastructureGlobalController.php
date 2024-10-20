@@ -33,7 +33,7 @@ class InfrastructureGlobalController extends Controller
     }
 
     public function miningstructures() {
-        // Получаем список всех структур с доком
+        // Получаем список всех метеноксов
         $miningStructures = Service::getMetenoxStructuresInSpace();
 
         // выводим шаблон
