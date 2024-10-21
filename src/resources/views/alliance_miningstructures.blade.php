@@ -13,7 +13,7 @@
             <th scope="col">Moon</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
-            <th scope="col">Tax</th>
+            <th scope="col">Profit</th>
         </tr>
         </thead>
         <tbody>
@@ -29,7 +29,13 @@
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach
                 </td>
-                <td></td>
+                <td>
+                    @if($miningStructure->profit > 0)
+                        {{ number_format($miningStructure->profit, 2) }} ISK
+                    @else
+                        Нет данных
+                    @endif
+                </td>
             </tr>
         @endforeach
         </tbody>

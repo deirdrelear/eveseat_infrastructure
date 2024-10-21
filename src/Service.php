@@ -326,6 +326,7 @@ class Service
             $nearest_moon = self::getNearestMoon($metenoxStructure->item_id);
             $metenoxStructure->nearest_moon = $nearest_moon ? $nearest_moon->name : null;
             $metenoxStructure->state = DB::table('corporation_structures')->where('structure_id', $metenoxStructure->item_id)->value('state');
+            $metenoxStructure->profit = self::calculateProfit($nearest_moon->moon_id);
         }
     
         // Получаем имена и типы для структур и возвращаем результат, заодно преобразуем в массив
@@ -576,5 +577,25 @@ class Service
             }
         }
         return $nearest_moon;
+    }
+    
+    static public function calculateProfit($moon_id)
+    {
+        $mining_volume = 30000; // 30000 m3 в час
+        $reprocessing_yield = 40; // 40% эффективность переработки
+        $hours_per_month = date('t') * 24; // Количество часов в текущем месяце
+
+        $refined_value = DB::select(
+            "SELECT SUM((SELECT SUM(itm.quantity * mp.adjusted_price) 
+            FROM invTypeMaterials itm 
+            JOIN market_prices mp ON mp.type_id = itm.materialTypeID 
+            WHERE itm.typeID = umc.type_id) * umc.rate * ? * ? / it.volume * ? / 100) as value
+            FROM universe_moon_contents umc
+            JOIN invTypes it ON it.typeID = umc.type_id
+            WHERE umc.moon_id = ?",
+            [$mining_volume, $hours_per_month, $reprocessing_yield, $moon_id]
+        );
+
+        return $refined_value[0]->value ?? 0;
     }
 }
