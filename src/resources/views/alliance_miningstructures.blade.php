@@ -5,7 +5,7 @@
 
 @section('infrastructure_content')
     <div class="form-group date-filter-container">
-        <label for="date-filter">Выберите дату:</label>
+        <label for="date-filter">Выберите дату для расчета заправки:</label>
         <input type="text" id="date-filter" class="form-control flatpickr date-filter-input" placeholder="Выберите дату">
     </div>
 
@@ -19,6 +19,7 @@
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
             <th scope="col">Profit</th>
+            <th scope="col">Shutdown Date</th>
         </tr>
         </thead>
         <tbody>
@@ -40,6 +41,17 @@
                     @else
                         Нет данных
                     @endif
+                </td>
+                <td>
+                    @php
+                        $fuelBlocks = $miningStructure->fuels->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312, 36945])->sum('quantity');
+                        $magmaticGas = $miningStructure->fuels->where('fuel_type.typeID', 16275)->first()->quantity ?? 0;
+                        $fuelBlockHours = $fuelBlocks / 5;
+                        $magmaticGasHours = $magmaticGas / 88;
+                        $shutdownHours = min($fuelBlockHours, $magmaticGasHours);
+                        $shutdownDate = now()->addHours($shutdownHours);
+                    @endphp
+                    {{ $shutdownDate->format('Y-m-d H:i') }}
                 </td>
             </tr>
         @endforeach
@@ -63,7 +75,7 @@
         </style>
         <script>
             flatpickr("#date-filter", {
-                enableTime: true,
+                enableTime: false,
                 dateFormat: "Y-m-d",
                 theme: "dark",
                 defaultDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
