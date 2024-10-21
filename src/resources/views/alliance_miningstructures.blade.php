@@ -82,7 +82,7 @@
                 theme: "dark",
                 defaultDate: "{{ $targetDate->format('Y-m-d') }}",
                 onChange: function(selectedDates, dateStr, instance) {
-                    window.location.href = '{{ route("infrastructure.alliance.miningstructures") }}?target_date=' + dateStr;
+                    window.location.href = '{{ route("infrastructure.alliance_miningstructures") }}?target_date=' + dateStr;
                 }
             });
         </script>
