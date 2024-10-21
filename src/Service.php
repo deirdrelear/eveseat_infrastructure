@@ -325,6 +325,7 @@ class Service
             $metenoxStructure->fuels = self::findFuelsForStructure($metenoxStructure->item_id, $fuels);
             $nearest_moon = self::getNearestMoon($metenoxStructure->item_id);
             $metenoxStructure->nearest_moon = $nearest_moon ? $nearest_moon->name : null;
+            $metenoxStructure->state = DB::table('corporation_structures')->where('structure_id', $metenoxStructure->item_id)->value('state');
         }
     
         // Получаем имена и типы для структур и возвращаем результат, заодно преобразуем в массив

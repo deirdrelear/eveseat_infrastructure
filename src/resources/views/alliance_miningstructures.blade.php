@@ -9,7 +9,7 @@
         <tr>
             <th scope="col">Structure Type</th>
             <th scope="col">Name</th>
-            <th scope="col">Solar System</th>
+            <th scope="col">State</th>
             <th scope="col">Moon</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
@@ -21,7 +21,7 @@
             <tr>
                 <td>{{ $miningStructure->structure_type->typeName }}</td>
                 <td>{{ $miningStructure->name }}</td>
-                <td>{{ $miningStructure->solarSystem->name }}</td>
+                <td>{{ $miningStructure->state }}</td>
                 <td>{{ $miningStructure->nearest_moon }}</td>
                 <td>{{ $miningStructure->corporation->name }}</td>
                 <td>
