@@ -7,6 +7,7 @@ use Deirdrelear\Seat\Infrastructure\Service;
 use Seat\Web\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Request; 
 
 class InfrastructureAllianceController extends Controller
 {
