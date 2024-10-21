@@ -617,7 +617,30 @@ class Service
             $total_profit += $material->total_value;
         }
     
-        return $total_profit;
+        // Расчет стоимости топлива
+        $fuel_block_ids = [4051, 4246, 4247, 4312]; // ID типов фуел блоков
+        $fuel_block_prices = DB::table('market_prices')
+            ->whereIn('type_id', $fuel_block_ids)
+            ->pluck('average_price', 'type_id');
+    
+        $cheapest_fuel_block_price = $fuel_block_prices->min();
+    
+        $magmatic_gas_price = DB::table('market_prices')
+            ->where('type_id', 81143) // ID магматического газа
+            ->value('average_price');
+    
+        $fuel_block_cost = $cheapest_fuel_block_price * 5 * $hours_per_month;
+        $magmatic_gas_cost = $magmatic_gas_price * 88 * $hours_per_month;
+    
+        $total_fuel_cost = $fuel_block_cost + $magmatic_gas_cost;
+        // Вычитаем стоимость топлива из общей прибыли
+        $net_profit = $total_profit - $total_fuel_cost;
+    
+        return [
+            'gross_profit' => $total_profit,
+            'fuel_cost' => $total_fuel_cost,
+            'net_profit' => $net_profit
+        ];
     }
 
     public static function calculateShutdownDate($miningStructure)
