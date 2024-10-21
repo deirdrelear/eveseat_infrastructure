@@ -340,11 +340,6 @@ class Service
             ->where('structure_id', $metenoxStructure->item_id)
             ->value('state');
 
-            // Получаем имя структуры
-            $metenoxStructure->name = DB::table('corporation_structures')
-                ->where('structure_id', $metenoxStructure->item_id)
-                ->value('name');
-
             // Находим ближайшую луну
             $nearest_moon = self::findNearestMoon($metenoxStructure->item_id);
             $metenoxStructure->nearest_moon = $nearest_moon ? $nearest_moon->name : 'Неизвестно';
