@@ -584,18 +584,39 @@ class Service
         $mining_volume = 30000; // 30000 m3 в час
         $reprocessing_yield = 40; // 40% эффективность переработки
         $hours_per_month = date('t') * 24; // Количество часов в текущем месяце
-
+    
         $refined_value = DB::select(
-            "SELECT SUM((SELECT SUM(itm.quantity * mp.adjusted_price) 
-            FROM invTypeMaterials itm 
-            JOIN market_prices mp ON mp.type_id = itm.materialTypeID 
-            WHERE itm.typeID = umc.type_id) * umc.rate * ? * ? / it.volume * ? / 100) as value
-            FROM universe_moon_contents umc
-            JOIN invTypes it ON it.typeID = umc.type_id
-            WHERE umc.moon_id = ?",
-            [$mining_volume, $hours_per_month, $reprocessing_yield, $moon_id]
+            "SELECT 
+                itm.materialTypeID,
+                it.typeName AS material_name,
+                SUM(FLOOR(umc.rate * ? * ? / umc_type.volume / 100) * itm.quantity * ?) AS total_quantity,
+                AVG(mp.average_price) AS avg_price,
+                SUM(FLOOR(umc.rate * ? * ? / umc_type.volume / 100) * itm.quantity * ?) * AVG(mp.average_price) AS total_value
+            FROM 
+                universe_moon_contents umc
+            JOIN 
+                invTypes umc_type ON umc_type.typeID = umc.type_id
+            JOIN 
+                invTypeMaterials itm ON itm.typeID = umc.type_id
+            JOIN 
+                invTypes it ON it.typeID = itm.materialTypeID
+            LEFT JOIN
+                market_prices mp ON mp.type_id = itm.materialTypeID
+            WHERE 
+                umc.moon_id = ?
+                AND itm.materialTypeID > 10000
+            GROUP BY 
+                itm.materialTypeID, it.typeName
+            ORDER BY 
+                total_value DESC",
+            [$mining_volume, $hours_per_month, $reprocessing_yield / 100, $mining_volume, $hours_per_month, $reprocessing_yield / 100, $moon_id]
         );
-
-        return $refined_value[0]->value ?? 0;
+    
+        $total_profit = 0;
+        foreach ($refined_value as $material) {
+            $total_profit += $material->total_value;
+        }
+    
+        return $total_profit;
     }
 }
