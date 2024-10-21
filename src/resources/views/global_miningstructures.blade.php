@@ -13,7 +13,7 @@
             <th scope="col">Moon</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
-            <th scope="col">Profit</th>
+            <th scope="col">Tax</th>
         </tr>
         </thead>
         <tbody>
