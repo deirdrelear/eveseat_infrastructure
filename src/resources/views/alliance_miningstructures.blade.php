@@ -63,9 +63,10 @@
         </style>
         <script>
             flatpickr("#date-filter", {
-                enableTime: false,
+                enableTime: true,
                 dateFormat: "Y-m-d",
-                theme: "dark"
+                theme: "dark",
+                defaultDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
             });
         
             document.getElementById('date-filter').addEventListener('change', function() {
