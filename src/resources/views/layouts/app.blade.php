@@ -18,7 +18,7 @@
 
 @push('javascript')
     <script src="{{ asset('web/js/adminlte.min.js') }}"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.js"></script>
     <script src="{{ asset('vendor/infrastructure/js/infrastructure-menu.js') }}"></script>
     <script>
         $(document).ready(function() {
