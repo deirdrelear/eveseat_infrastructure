@@ -42,7 +42,10 @@
                         Нет данных
                     @endif
                 </td>
-                <td>{{ $miningStructure->shutdown_date->format('Y-m-d H:i') }}</td>
+                <td>
+                    FB: {{ $miningStructure->shutdown_date['fuelBlock']->format('Y-m-d H:i') }}<br>
+                    MG: {{ $miningStructure->shutdown_date['magmaticGas']->format('Y-m-d H:i') }}
+                </td>
             </tr>
         @endforeach
         </tbody>

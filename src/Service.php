@@ -622,11 +622,17 @@ class Service
 
     public static function calculateShutdownDate($miningStructure)
     {
-        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312, 36945])->sum('quantity');
-        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', 16275)->first()->quantity ?? 0;
-        $fuelBlockHours = $fuelBlocks / 5;
-        $magmaticGasHours = $magmaticGas / 88;
-        $shutdownHours = min($fuelBlockHours, $magmaticGasHours);
-        return now()->addHours($shutdownHours);
+        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312])->sum('quantity');
+        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', 81143)->first()->quantity ?? 0;
+        $fuelBlockHours = floor($fuelBlocks / 5);
+        $magmaticGasHours = floor($magmaticGas / 88);
+        
+        $fuelBlockShutdownDate = now()->addHours($fuelBlockHours)->startOfHour();
+        $magmaticGasShutdownDate = now()->addHours($magmaticGasHours)->startOfHour();
+        
+        return [
+            'fuelBlock' => $fuelBlockShutdownDate,
+            'magmaticGas' => $magmaticGasShutdownDate
+        ];
     }
 }
