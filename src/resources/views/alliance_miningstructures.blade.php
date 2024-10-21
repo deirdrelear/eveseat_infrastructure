@@ -37,9 +37,9 @@
                     @endforeach
                 </td>
                 <td>
-                    @if($metenoxStructure->profit_status === 'available')
+                    @if($miningStructure->profit_status === 'available')
                         Прибыль: {{ number_format($miningStructure->net_profit, 2) }} ISK
-                    @elseif($metenoxStructure->profit_status === 'unavailable')
+                    @elseif($miningStructure->profit_status === 'unavailable')
                         Данные о прибыли недоступны
                     @else
                         Невозможно рассчитать прибыль
