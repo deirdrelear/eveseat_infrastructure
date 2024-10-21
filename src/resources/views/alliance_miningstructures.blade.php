@@ -37,8 +37,10 @@
                     @endforeach
                 </td>
                 <td>
-                    @if($miningStructure->profit > 0)
-                        {{ number_format($miningStructure->profit, 2) }} ISK
+                    @if(is_numeric($miningStructure->net_profit))
+                        Gross: {{ number_format($miningStructure->gross_profit, 2) }} ISK<br>
+                        Fuel Cost: {{ number_format($miningStructure->fuel_cost, 2) }} ISK<br>
+                        Net: {{ number_format($miningStructure->net_profit, 2) }} ISK
                     @else
                         Нет данных
                     @endif

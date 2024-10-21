@@ -69,12 +69,19 @@ class InfrastructureAllianceController extends Controller
         foreach ($miningStructures as $miningStructure) {
             $miningStructure->shutdown_date = Service::calculateShutdownDate($miningStructure);
             $miningStructure->required_fuel = Service::calculateRequiredFuel($miningStructure, $targetDate);
+            
+            $nearest_moon = Service::getNearestMoon($miningStructure->structure_id);
+            if ($nearest_moon) {
+                $profit_data = Service::calculateProfit($nearest_moon->moon_id);
+                $miningStructure->gross_profit = $profit_data['gross_profit'];
+                $miningStructure->fuel_cost = $profit_data['fuel_cost'];
+                $miningStructure->net_profit = $profit_data['net_profit'];
+            } else {
+                $miningStructure->gross_profit = 0;
+                $miningStructure->fuel_cost = 0;
+                $miningStructure->net_profit = 0;
+            }
         }
-
-        return view("infrastructure::alliance_miningstructures", [
-            'miningStructures' => $miningStructures,
-            'targetDate' => $targetDate
-        ]);
     }
 
 }
