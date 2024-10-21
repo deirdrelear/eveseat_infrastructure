@@ -38,6 +38,7 @@
                 </td>
                 <td>
                     @if($miningStructure->profit_status === 'available')
+                        Выручка: {{ number_format($miningStructure->gross_profit, 2) }} ISK<br>
                         Прибыль: {{ number_format($miningStructure->net_profit, 2) }} ISK
                     @elseif($miningStructure->profit_status === 'unavailable')
                         Данные о прибыли недоступны
