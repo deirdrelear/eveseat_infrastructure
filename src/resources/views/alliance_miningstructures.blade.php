@@ -6,7 +6,7 @@
 @section('infrastructure_content')
     <div class="form-group date-filter-container">
         <label for="date-filter">Выберите дату для расчета заправки:</label>
-        <input type="text" id="date-filter" class="form-control flatpickr date-filter-input" placeholder="Выберите дату">
+        <input type="text" id="date-filter" class="form-control flatpickr date-filter-input" placeholder="Выберите дату" value="{{ $targetDate->format('Y-m-d') }}">
     </div>
 
     <table class="table table-striped table-hover" id="allianceminingStructuresTable">
@@ -80,7 +80,7 @@
                 enableTime: false,
                 dateFormat: "Y-m-d",
                 theme: "dark",
-                defaultDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+                defaultDate: "{{ $targetDate->format('Y-m-d') }}",
                 onChange: function(selectedDates, dateStr, instance) {
                     window.location.href = '{{ route("infrastructure.alliance.miningstructures") }}?target_date=' + dateStr;
                 }
