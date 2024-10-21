@@ -4,11 +4,12 @@
 @section('infrastructure_page_header', 'Alliance Infrastructure: Metenoxes')
 
 @section('infrastructure_content')
+    <div class="form-group date-filter-container">
+        <label for="date-filter">Выберите дату:</label>
+        <input type="text" id="date-filter" class="form-control flatpickr date-filter-input" placeholder="Выберите дату">
+    </div>
+
     <table class="table table-striped table-hover" id="allianceminingStructuresTable">
-        <div class="form-group">
-            <label for="date-filter">Выберите дату:</label>
-            <input type="text" id="date-filter" class="form-control flatpickr" placeholder="Выберите дату">
-        </div>
         <thead>
         <tr>
             <th scope="col">Structure Type</th>
@@ -50,6 +51,16 @@
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+        <style>
+            .date-filter-container {
+                width: 25%;
+                min-width: 200px;
+                max-width: 300px;
+            }
+            .date-filter-input {
+                width: 100%;
+            }
+        </style>
         <script>
             flatpickr("#date-filter", {
                 enableTime: false,
@@ -63,7 +74,7 @@
                 // Например, можно перезагрузить таблицу с новыми данными
                 // $('#globalminingStructuresTable').DataTable().ajax.reload();
             });
-       </script>
+        </script>
     @endpush 
 
 @endsection
