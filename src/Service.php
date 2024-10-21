@@ -310,29 +310,76 @@ class Service
         return self::convertCollectionToArray(self::getNamesForStructures($dockingStructures));
     }
 
-    // Возвращает список всех метеноксов
-    // Со всеми именами и количествами топлива
-    static public function getMetenoxStructuresInSpace($CorporationsIds = [])
+    /**
+    * Возвращает список всех метеноксов со всеми необходимыми данными
+    *
+    * @param array $corporationIds Массив идентификаторов корпораций
+    * @param \Carbon\Carbon|null $targetDate Целевая дата для расчета топлива
+    * @return array Массив объектов метеноксов с дополнительными данными
+    */
+    static public function getMetenoxStructuresInSpace(array $corporationIds = [], ?\Carbon\Carbon $targetDate = null): array
     {
-        // Сначала получаем все метеноксы в космосе
-        $metenoxStructures = self::getRowMetenoxStructuresInSpace($CorporationsIds);
-    
+        // Если целевая дата не указана, устанавливаем её на месяц вперед
+        if (!$targetDate) {
+            $targetDate = now()->addMonth();
+        }
+
+        // Получаем все метеноксы в космосе
+        $metenoxStructures = self::getRowMetenoxStructuresInSpace($corporationIds);
+        
         // Получаем полный список всего топлива
         $fuels = self::getFuels();
-    
-        // Добавляем каждое топливо в свою структуру и находим ближайшую луну
+
+        // Добавляем каждое топливо в свою структуру
         foreach ($metenoxStructures as &$metenoxStructure) {
+            // Добавляем топливо в структуру
             $metenoxStructure->fuels = self::findFuelsForStructure($metenoxStructure->item_id, $fuels);
-            $nearest_moon = self::getNearestMoon($metenoxStructure->item_id);
-            $metenoxStructure->nearest_moon = $nearest_moon ? $nearest_moon->name : null;
-            $metenoxStructure->state = DB::table('corporation_structures')->where('structure_id', $metenoxStructure->item_id)->value('state');
-            $metenoxStructure->profit = self::calculateProfit($nearest_moon->moon_id);
+        
+            // Получаем состояние структуры
+            $metenoxStructure->state = DB::table('corporation_structures')
+            ->where('structure_id', $metenoxStructure->item_id)
+            ->value('state');
+
+            // Получаем имя структуры
+            $metenoxStructure->name = DB::table('corporation_structures')
+                ->where('structure_id', $metenoxStructure->item_id)
+                ->value('name');
+
+            // Находим ближайшую луну
+            $nearest_moon = self::findNearestMoon($metenoxStructure->item_id);
+            $metenoxStructure->nearest_moon = $nearest_moon ? $nearest_moon->name : 'Неизвестно';
+
+            // Рассчитываем прибыль, если есть ближайшая луна
+            if ($nearest_moon) {
+                $profit_data = self::calculateProfit($nearest_moon->moon_id);
+                if ($profit_data !== null) {
+                    $metenoxStructure->gross_profit = $profit_data['gross_profit'];
+                    $metenoxStructure->fuel_cost = $profit_data['fuel_cost'];
+                    $metenoxStructure->net_profit = $profit_data['net_profit'];
+                    $metenoxStructure->profit_status = 'available';
+                } else {
+                    $metenoxStructure->gross_profit = null;
+                    $metenoxStructure->fuel_cost = null;
+                    $metenoxStructure->net_profit = null;
+                    $metenoxStructure->profit_status = 'unavailable';
+                }
+            } else {
+                $metenoxStructure->gross_profit = null;
+                $metenoxStructure->fuel_cost = null;
+                $metenoxStructure->net_profit = null;
+                $metenoxStructure->profit_status = 'unknown';
+            }
+
+            // Рассчитываем дату отключения
+            $metenoxStructure->shutdown_date = self::calculateShutdownDate($metenoxStructure);
+        
+            // Рассчитываем необходимое количество топлива до целевой даты
+            $metenoxStructure->required_fuel = self::calculateRequiredFuel($metenoxStructure, $targetDate);
         }
-    
-        // Получаем имена и типы для структур и возвращаем результат, заодно преобразуем в массив
+
+        // Получаем имена и типы для структур и возвращаем результат
         return self::convertCollectionToArray(self::getNamesForStructures($metenoxStructures));
     }
-
 
     // Ищет и возвращает элемент массива типов по идентификатору
     static public function findTypeById($id, $types) {
@@ -579,67 +626,63 @@ class Service
         return $nearest_moon;
     }
     
-    static public function calculateProfit($moon_id)
+    /**
+     * Рассчитывает прибыль для данной луны
+     *
+     * @param int $moon_id Идентификатор луны
+     * @return array|null Массив с данными о прибыли или null, если данные недоступны
+     */
+    static public function calculateProfit(int $moon_id): ?array
     {
         $mining_volume = 30000; // 30000 m3 в час
         $reprocessing_yield = 40; // 40% эффективность переработки
         $hours_per_month = date('t') * 24; // Количество часов в текущем месяце
-    
-        $refined_value = DB::select(
-            "SELECT 
-                itm.materialTypeID,
-                it.typeName AS material_name,
-                SUM(FLOOR(umc.rate * ? * ? / umc_type.volume / 100) * itm.quantity * ?) AS total_quantity,
-                AVG(mp.average_price) AS avg_price,
-                SUM(FLOOR(umc.rate * ? * ? / umc_type.volume / 100) * itm.quantity * ?) * AVG(mp.average_price) AS total_value
-            FROM 
-                universe_moon_contents umc
-            JOIN 
-                invTypes umc_type ON umc_type.typeID = umc.type_id
-            JOIN 
-                invTypeMaterials itm ON itm.typeID = umc.type_id
-            JOIN 
-                invTypes it ON it.typeID = itm.materialTypeID
-            LEFT JOIN
-                market_prices mp ON mp.type_id = itm.materialTypeID
-            WHERE 
-                umc.moon_id = ?
-                AND itm.materialTypeID > 10000
-            GROUP BY 
-                itm.materialTypeID, it.typeName
-            ORDER BY 
-                total_value DESC",
-            [$mining_volume, $hours_per_month, $reprocessing_yield / 100, $mining_volume, $hours_per_month, $reprocessing_yield / 100, $moon_id]
-        );
-    
-        $total_profit = 0;
-        foreach ($refined_value as $material) {
-            $total_profit += $material->total_value;
+
+        $refined_value = DB::select("
+            SELECT 
+                SUM(
+                FLOOR(umc.rate * ? * ? / umc_type.volume / 100) * 
+                itm.quantity * 
+                ? * 
+                mp.average_price
+            ) AS total_value
+        FROM universe_moon_contents umc
+        JOIN invTypes umc_type ON umc.type_id = umc_type.typeID
+        JOIN invTypeMaterials itm ON umc_type.typeID = itm.typeID
+        JOIN market_prices mp ON itm.materialTypeID = mp.type_id
+        WHERE umc.moon_id = ?
+        ", [$mining_volume, $hours_per_month, $reprocessing_yield / 100, $moon_id]);
+
+        if (empty($refined_value) || $refined_value[0]->total_value === null) {
+            return null;  // Возвращаем null, если данных о составе луны нет или расчет не удался
         }
-    
+
+        $total_profit = $refined_value[0]->total_value;
+
         // Расчет стоимости топлива
         $fuel_block_ids = [4051, 4246, 4247, 4312]; // ID типов фуел блоков
         $fuel_block_prices = DB::table('market_prices')
             ->whereIn('type_id', $fuel_block_ids)
             ->pluck('average_price', 'type_id');
-    
+
         $cheapest_fuel_block_price = $fuel_block_prices->min();
-    
+
         $magmatic_gas_price = DB::table('market_prices')
             ->where('type_id', 81143) // ID магматического газа
             ->value('average_price');
-    
+
         $fuel_block_cost = $cheapest_fuel_block_price * 5 * $hours_per_month;
         $magmatic_gas_cost = $magmatic_gas_price * 88 * $hours_per_month;
-    
+
         $total_fuel_cost = $fuel_block_cost + $magmatic_gas_cost;
+
         // Вычитаем стоимость топлива из общей прибыли
         $net_profit = $total_profit - $total_fuel_cost;
-    
+
         return [
-            'gross_profit' => $total_profit,
-            'fuel_cost' => $total_fuel_cost,
-            'net_profit' => $net_profit
+        'gross_profit' => $total_profit,
+        'fuel_cost' => $total_fuel_cost,
+        'net_profit' => $net_profit
         ];
     }
 
@@ -675,4 +718,5 @@ class Service
             'magmaticGas' => $requiredMagmaticGas
         ];
     }
+
 }

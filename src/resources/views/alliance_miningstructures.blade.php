@@ -37,12 +37,12 @@
                     @endforeach
                 </td>
                 <td>
-                    @if(is_numeric($miningStructure->net_profit))
-                        Gross: {{ number_format($miningStructure->gross_profit, 2) }} ISK<br>
-                        Fuel Cost: {{ number_format($miningStructure->fuel_cost, 2) }} ISK<br>
-                        Net: {{ number_format($miningStructure->net_profit, 2) }} ISK
+                    @if($metenoxStructure->profit_status === 'available')
+                        Прибыль: {{ number_format($metenoxStructure->net_profit, 2) }} ISK
+                    @elseif($metenoxStructure->profit_status === 'unavailable')
+                        Данные о прибыли недоступны
                     @else
-                        Нет данных
+                        Невозможно рассчитать прибыль
                     @endif
                 </td>
                 <td>
