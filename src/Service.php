@@ -619,4 +619,14 @@ class Service
     
         return $total_profit;
     }
+
+    public static function calculateShutdownDate($miningStructure)
+    {
+        $fuelBlocks = $miningStructure->fuels->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312, 36945])->sum('quantity');
+        $magmaticGas = $miningStructure->fuels->where('fuel_type.typeID', 16275)->first()->quantity ?? 0;
+        $fuelBlockHours = $fuelBlocks / 5;
+        $magmaticGasHours = $magmaticGas / 88;
+        $shutdownHours = min($fuelBlockHours, $magmaticGasHours);
+        return now()->addHours($shutdownHours);
+}
 }

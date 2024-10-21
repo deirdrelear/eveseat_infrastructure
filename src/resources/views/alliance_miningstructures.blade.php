@@ -42,17 +42,7 @@
                         Нет данных
                     @endif
                 </td>
-                <td>
-                    @php
-                        $fuelBlocks = $miningStructure->fuels->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312, 36945])->sum('quantity');
-                        $magmaticGas = $miningStructure->fuels->where('fuel_type.typeID', 16275)->first()->quantity ?? 0;
-                        $fuelBlockHours = $fuelBlocks / 5;
-                        $magmaticGasHours = $magmaticGas / 88;
-                        $shutdownHours = min($fuelBlockHours, $magmaticGasHours);
-                        $shutdownDate = now()->addHours($shutdownHours);
-                    @endphp
-                    {{ $shutdownDate->format('Y-m-d H:i') }}
-                </td>
+                <td>{{ $miningStructure->shutdown_date->format('Y-m-d H:i') }}</td>
             </tr>
         @endforeach
         </tbody>

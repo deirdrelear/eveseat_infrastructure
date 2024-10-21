@@ -60,6 +60,11 @@ class InfrastructureAllianceController extends Controller
         // Получаем список метеноксов для заданных альянсов
         $miningStructures = Service::getMetenoxStructuresInSpace($allianceCorporationsIds);
 
+        // Рассчитываем дату выключения для каждого метенокса
+        foreach ($miningStructures as $miningStructure) {
+            $miningStructure->shutdown_date = Service::calculateShutdownDate($miningStructure);
+        }
+
         // выводим шаблон
         return view("infrastructure::alliance_miningstructures", ['miningStructures' => $miningStructures]);
     }
