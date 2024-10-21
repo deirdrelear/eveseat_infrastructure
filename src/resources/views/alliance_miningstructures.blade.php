@@ -38,7 +38,7 @@
                 </td>
                 <td>
                     @if($metenoxStructure->profit_status === 'available')
-                        Прибыль: {{ number_format($metenoxStructure->net_profit, 2) }} ISK
+                        Прибыль: {{ number_format($miningStructure->net_profit, 2) }} ISK
                     @elseif($metenoxStructure->profit_status === 'unavailable')
                         Данные о прибыли недоступны
                     @else
