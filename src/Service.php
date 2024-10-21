@@ -337,11 +337,11 @@ class Service
         
             // Получаем состояние структуры
             $metenoxStructure->state = DB::table('corporation_structures')
-            ->where('structure_id', $metenoxStructure->item_id)
-            ->value('state');
+                ->where('structure_id', $metenoxStructure->item_id)
+                ->value('state');
 
             // Находим ближайшую луну
-            $nearest_moon = self::findNearestMoon($metenoxStructure->item_id);
+            $nearest_moon = self::getNearestMoon($metenoxStructure->item_id);
             $metenoxStructure->nearest_moon = $nearest_moon ? $nearest_moon->name : 'Неизвестно';
 
             // Рассчитываем прибыль, если есть ближайшая луна
