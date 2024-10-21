@@ -20,6 +20,7 @@
             <th scope="col">Fuel</th>
             <th scope="col">Profit</th>
             <th scope="col">Shutdown Date</th>
+            <th scope="col">Required Fuel</th>
         </tr>
         </thead>
         <tbody>
@@ -46,6 +47,14 @@
                     FB: {{ $miningStructure->shutdown_date['fuelBlock']->format('Y-m-d H:i') }}<br>
                     MG: {{ $miningStructure->shutdown_date['magmaticGas']->format('Y-m-d H:i') }}
                 </td>
+                <td>
+                    @if($miningStructure->required_fuel['fuelBlocks'] > 0 || $miningStructure->required_fuel['magmaticGas'] > 0)
+                        FB: {{ number_format($miningStructure->required_fuel['fuelBlocks']) }}<br>
+                        MG: {{ number_format($miningStructure->required_fuel['magmaticGas']) }}
+                    @else
+                        Все хорошо
+                    @endif
+                </td>
             </tr>
         @endforeach
         </tbody>
@@ -71,14 +80,10 @@
                 enableTime: false,
                 dateFormat: "Y-m-d",
                 theme: "dark",
-                defaultDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
-            });
-        
-            document.getElementById('date-filter').addEventListener('change', function() {
-                // Здесь добавьте логику для обновления данных на основе выбранной даты
-                console.log('Выбрана дата:', this.value);
-                // Например, можно перезагрузить таблицу с новыми данными
-                // $('#globalminingStructuresTable').DataTable().ajax.reload();
+                defaultDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
+                onChange: function(selectedDates, dateStr, instance) {
+                    window.location.href = '{{ route("infrastructure.alliance.miningstructures") }}?target_date=' + dateStr;
+                }
             });
         </script>
     @endpush 

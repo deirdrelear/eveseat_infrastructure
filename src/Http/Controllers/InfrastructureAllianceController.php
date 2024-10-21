@@ -60,13 +60,17 @@ class InfrastructureAllianceController extends Controller
         // Получаем список метеноксов для заданных альянсов
         $miningStructures = Service::getMetenoxStructuresInSpace($allianceCorporationsIds);
 
-        // Рассчитываем дату выключения для каждого метенокса
+        $targetDate = $request->input('target_date') ? Carbon::parse($request->input('target_date')) : now()->addMonth();
+
         foreach ($miningStructures as $miningStructure) {
             $miningStructure->shutdown_date = Service::calculateShutdownDate($miningStructure);
+            $miningStructure->required_fuel = Service::calculateRequiredFuel($miningStructure, $targetDate);
         }
-
-        // выводим шаблон
-        return view("infrastructure::alliance_miningstructures", ['miningStructures' => $miningStructures]);
+    
+        return view("infrastructure::alliance_miningstructures", [
+            'miningStructures' => $miningStructures,
+            'targetDate' => $targetDate
+        ]);
     }
 
 }

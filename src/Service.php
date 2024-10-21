@@ -635,4 +635,21 @@ class Service
             'magmaticGas' => $magmaticGasShutdownDate
         ];
     }
+
+    public static function calculateRequiredFuel($miningStructure, $targetDate)
+    {
+        $currentDate = now();
+        $hoursUntilTarget = $currentDate->diffInHours($targetDate);
+
+        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312])->sum('quantity');
+        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', 81143)->first()->quantity ?? 0;
+
+        $requiredFuelBlocks = max(0, ($hoursUntilTarget * 5) - $fuelBlocks);
+        $requiredMagmaticGas = max(0, ($hoursUntilTarget * 88) - $magmaticGas);
+
+        return [
+            'fuelBlocks' => $requiredFuelBlocks,
+            'magmaticGas' => $requiredMagmaticGas
+        ];
+    }
 }
