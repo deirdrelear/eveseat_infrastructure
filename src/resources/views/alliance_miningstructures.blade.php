@@ -5,6 +5,10 @@
 
 @section('infrastructure_content')
     <table class="table table-striped table-hover" id="allianceminingStructuresTable">
+        <div class="form-group">
+            <label for="date-filter">Выберите дату:</label>
+            <input type="text" id="date-filter" class="form-control flatpickr" placeholder="Выберите дату">
+        </div>
         <thead>
         <tr>
             <th scope="col">Structure Type</th>
@@ -41,4 +45,25 @@
         </tbody>
     </table>
     <div class="container">
+
+    @push('javascript')
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+        <script>
+            flatpickr("#date-filter", {
+                enableTime: false,
+                dateFormat: "Y-m-d",
+                theme: "dark"
+            });
+        
+            document.getElementById('date-filter').addEventListener('change', function() {
+                // Здесь добавьте логику для обновления данных на основе выбранной даты
+                console.log('Выбрана дата:', this.value);
+                // Например, можно перезагрузить таблицу с новыми данными
+                // $('#globalminingStructuresTable').DataTable().ajax.reload();
+            });
+       </script>
+    @endpush 
+
 @endsection
