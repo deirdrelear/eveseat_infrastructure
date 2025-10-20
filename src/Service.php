@@ -420,6 +420,18 @@ class Service
         return null;
     }
 
+    // Ищет и возвращает элемент массива регионов по идентификатору
+    static public function findRegionById($id, $regions)
+    {
+        foreach ($regions as $region) {
+            if ($region->region_id == $id) {
+                return $region;
+            }
+        }
+
+        return null;
+    }
+
     // Возвращает список типов по идентификаторам
     static public function getTypesByIds(array $ids) {
         return DB::table('invTypes')
@@ -473,8 +485,34 @@ class Service
 
     // Возвращает имена солнечных систем по идентификаторам
     static private function getSolarSystems($ids) {
-        return DB::table('solar_systems')
+        $solarSystems = DB::table('solar_systems')
             ->whereIn('system_id', $ids)
+            ->get();
+
+        $regionIds = [];
+        foreach ($solarSystems as $solarSystem) {
+            if (!is_null($solarSystem->region_id)) {
+                $regionIds[] = $solarSystem->region_id;
+            }
+        }
+
+        $regionIds = array_unique($regionIds);
+        $regions = count($regionIds) > 0
+            ? self::getRegionsByIds($regionIds)
+            : [];
+
+        foreach ($solarSystems as $solarSystem) {
+            $solarSystem->region = self::findRegionById($solarSystem->region_id, $regions);
+        }
+
+        return $solarSystems;
+    }
+
+    // Возвращает список регионов по идентификаторам
+    static private function getRegionsByIds(array $ids)
+    {
+        return DB::table('regions')
+            ->whereIn('region_id', $ids)
             ->get();
     }
 
