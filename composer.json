@@ -3,7 +3,6 @@
     "description": "Infrastructure manager",
     "type": "seat-plugin",
     "license": "MIT",
-    "version": "1.0.0",
     "homepage": "https://github.com/deirdrelear/eveseat_infrastructure",
     "authors": [
         {
@@ -11,6 +10,10 @@
             "email": "dairalir.a1one@gmail.com"
         }
     ],
+    "support": {
+        "issues": "https://github.com/deirdrelear/eveseat_infrastructure/issues",
+        "source": "https://github.com/deirdrelear/eveseat_infrastructure"
+    },
     "autoload": {
         "psr-4": {
             "Deirdrelear\\Seat\\Infrastructure\\": "src/"
@@ -23,7 +26,7 @@
         "illuminate/support": "^10.0",
         "eveseat/web": "^5.0",
         "eveseat/eveapi": "^5.0",
-        "eveseat/services": "^5.0.1"
+        "eveseat/services": "^5.0"
     },
     "extra": {
         "laravel": {
@@ -31,5 +34,10 @@
                 "Deirdrelear\\Seat\\Infrastructure\\InfrastructureServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php -r \"file_exists('artisan') && passthru('php artisan package:discover --ansi');\""
+        ]
     }
 }
