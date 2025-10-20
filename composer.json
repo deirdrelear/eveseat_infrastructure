@@ -20,7 +20,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^10.0",
+        "illuminate/support": "^10.0",
         "eveseat/web": "^5.0",
         "eveseat/eveapi": "^5.0",
         "eveseat/services": "^5.0.1"
