@@ -7,6 +7,7 @@
     <table class="table table-striped table-hover" id="corporationIhubsTable">
         <thead>
         <tr>
+            <th scope="col">Region</th>
             <th scope="col">Solar System</th>
             <th scope="col">Corporation</th>
             <th scope="col">Upgrades</th>
@@ -15,6 +16,7 @@
         <tbody>
         @foreach($ihubs as $ihub)
             <tr>
+                <td>{{ optional(optional($ihub->solarSystem)->region)->name }}</td>
                 <td>{{ $ihub->solarSystem->name }}</td>
                 <td>{{ $ihub->corporation->name }}</td>
                 <td>

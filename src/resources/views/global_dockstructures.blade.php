@@ -10,6 +10,7 @@
             <th scope="col">Structure Type</th>
             <th scope="col">Name</th>
             <th scope="col">Solar System</th>
+            <th scope="col">Region</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
         </tr>
@@ -20,6 +21,7 @@
                 <td>{{ $dockingStructure->structure_type->typeName }}</td>
                 <td>{{ $dockingStructure->name }}</td>
                 <td>{{ $dockingStructure->solarSystem->name }}</td>
+                <td>{{ optional(optional($dockingStructure->solarSystem)->region)->name }}</td>
                 <td>{{ $dockingStructure->corporation->name }}</td>
                 <td>
                     @foreach($dockingStructure->fuels as $fuel)
