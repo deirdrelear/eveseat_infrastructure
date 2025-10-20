@@ -1,7 +1,7 @@
 @extends('web::layouts.grids.12')
 
 @push('head')
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
 @endpush
 
 @section('title')
