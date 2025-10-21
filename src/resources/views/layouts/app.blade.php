@@ -22,7 +22,7 @@
     <script src="{{ asset('vendor/infrastructure/js/infrastructure-menu.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('.table').DataTable();
+            $('table.data-table').DataTable();
         });
     </script>
 @endpush

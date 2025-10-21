@@ -4,7 +4,7 @@
 @section('infrastructure_page_header', 'Global Infrastructure: Metenoxes')
 
 @section('infrastructure_content')
-    <table class="table table-striped table-hover" id="globalminingStructuresTable">
+    <table class="table table-striped table-hover data-table" id="globalminingStructuresTable">
         <div class="form-group">
             <label for="date-filter">Выберите дату:</label>
             <input type="text" id="date-filter" class="form-control flatpickr" placeholder="Выберите дату">
@@ -18,11 +18,13 @@
             <th scope="col">Region</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
+            <th scope="col" class="text-center">Fitting</th>
             <th scope="col">Profit</th>
         </tr>
         </thead>
         <tbody>
         @foreach($miningStructures as $miningStructure)
+            @php($fittingModalId = 'structure-fitting-' . ($miningStructure->item_id ?? $loop->iteration))
             <tr>
                 <td>{{ $miningStructure->structure_type->typeName }}</td>
                 <td>{{ $miningStructure->name }}</td>
@@ -35,6 +37,11 @@
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach
                 </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" data-target="#{{ $fittingModalId }}">
+                        View Fitting
+                    </button>
+                </td>
                 <td>
                     @if($miningStructure->profit > 0)
                         {{ number_format($miningStructure->profit, 2) }} ISK
@@ -43,9 +50,16 @@
                     @endif
                 </td>
             </tr>
+            @push('structure-fitting-modals')
+                @include('infrastructure::partials.structure_fitting_modal', [
+                    'structure' => $miningStructure,
+                    'modal_id' => $fittingModalId,
+                ])
+            @endpush
         @endforeach
         </tbody>
     </table>
+    @stack('structure-fitting-modals')
     <div class="container">
         
     @push('javascript')

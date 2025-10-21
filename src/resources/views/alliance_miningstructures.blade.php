@@ -9,7 +9,7 @@
         <input type="text" id="date-filter" class="form-control flatpickr date-filter-input" placeholder="Выберите дату" value="{{ $targetDate->format('Y-m-d') }}">
     </div>
 
-    <table class="table table-striped table-hover" id="allianceminingStructuresTable">
+    <table class="table table-striped table-hover data-table" id="allianceminingStructuresTable">
         <thead>
         <tr>
             <th scope="col">Structure Type</th>
@@ -19,6 +19,7 @@
             <th scope="col">Region</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
+            <th scope="col" class="text-center">Fitting</th>
             <th scope="col">Profit</th>
             <th scope="col">Shutdown Date</th>
             <th scope="col">Required Fuel</th>
@@ -26,6 +27,7 @@
         </thead>
         <tbody>
         @foreach($miningStructures as $miningStructure)
+            @php($fittingModalId = 'structure-fitting-' . ($miningStructure->item_id ?? $loop->iteration))
             <tr>
                 <td>{{ $miningStructure->structure_type->typeName }}</td>
                 <td>{{ $miningStructure->name }}</td>
@@ -37,6 +39,11 @@
                     @foreach($miningStructure->fuels as $fuel)
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-info" data-toggle="modal" data-target="#{{ $fittingModalId }}">
+                        View Fitting
+                    </button>
                 </td>
                 <td>
                     @if($miningStructure->profit_status === 'available')
@@ -60,9 +67,16 @@
                     @endif
                 </td>
             </tr>
+            @push('structure-fitting-modals')
+                @include('infrastructure::partials.structure_fitting_modal', [
+                    'structure' => $miningStructure,
+                    'modal_id' => $fittingModalId,
+                ])
+            @endpush
         @endforeach
         </tbody>
     </table>
+    @stack('structure-fitting-modals')
     <div class="container">
 
     @push('javascript')

@@ -15,6 +15,7 @@ class Service
     const DOCKING_STRUCTURES_TYPES_ID_LIST = [35835, 35836, 35825, 35826, 35827, 35832, 35833, 35834, 47512, 47513, 47514, 47515, 47516];
     const NAVIGATION_STRUCTURES_TYPES_ID_LIST = [35841, 35840, 37534];
     const METENOX_STRUCTURES_TYPES_ID_LIST = [81826];
+    const STRUCTURE_FITTING_EXCLUDED_FLAGS = ['StructureFuel'];
 
     // Возвращает все корпорации, в которых состоят альты пользователя
     static public function getUserCorporationsIds() {
@@ -155,6 +156,17 @@ class Service
             usort($rowIHub->upgrades, function($upgrade1, $upgrade2) {
                 return strcmp($upgrade1->upgrade_type->typeName, $upgrade2->upgrade_type->typeName);
             });
+
+            $fittingItems = [];
+            foreach ($rowIHub->upgrades as $upgrade) {
+                $fittingItems[] = (object) [
+                    'type' => $upgrade->upgrade_type,
+                    'quantity' => $upgrade->quantity ?? 1,
+                    'state' => $upgrade->location_flag ?? null,
+                ];
+            }
+
+            $rowIHub->fitting_items = $fittingItems;
         }
 
         // Теперь преобразуем в массив и возвращаем результат
@@ -231,8 +243,55 @@ class Service
         return $fuels;
     }
 
+    static private function getStructureFittingsByIds(array $structureIds): array
+    {
+        if (count($structureIds) === 0) {
+            return [];
+        }
+
+        $modules = DB::table('corporation_assets')
+            ->whereIn('location_id', $structureIds)
+            ->where('location_flag', 'like', 'Structure%')
+            ->whereNotIn('location_flag', self::STRUCTURE_FITTING_EXCLUDED_FLAGS)
+            ->whereNotIn('type_id', self::FUEL_TYPES_ID_LIST)
+            ->get();
+
+        if (count($modules) === 0) {
+            return [];
+        }
+
+        $typeIds = [];
+        foreach ($modules as $module) {
+            $typeIds[] = $module->type_id;
+        }
+
+        $typeIds = array_unique($typeIds);
+        $types = self::getTypesByIds($typeIds);
+
+        $groupedModules = [];
+        foreach ($modules as $module) {
+            $moduleType = self::findTypeById($module->type_id, $types);
+            $groupedModules[$module->location_id][] = (object) [
+                'type' => $moduleType,
+                'quantity' => $module->quantity,
+                'state' => $module->location_flag,
+            ];
+        }
+
+        foreach ($groupedModules as &$moduleList) {
+            usort($moduleList, function ($left, $right) {
+                $leftName = isset($left->type->typeName) ? $left->type->typeName : '';
+                $rightName = isset($right->type->typeName) ? $right->type->typeName : '';
+
+                return strcmp($leftName, $rightName);
+            });
+        }
+
+        return $groupedModules;
+    }
+
     // Добавляет в данные о структуре данные о ее типе, корпорации, названии топлива в ней
-    static private function getNamesForStructures($fueledStructures) {
+    static private function getNamesForStructures($fueledStructures, array $structureFittings = []) {
         // Находим имена корпораций и типов структур
         $corporationIds = [];
         $solarSystemIds = [];
@@ -287,6 +346,10 @@ class Service
         // Сначала получаем все навигационные структуры в космосе
         $NavigationStructures = self::getRowNavigationStructuresInSpace($CorporationsIds);
 
+        $structureFittings = self::getStructureFittingsByIds(
+            $NavigationStructures->pluck('item_id')->unique()->values()->toArray()
+        );
+
         // Получаем полный список всего топлива
         $fuels = self::getFuels();
 
@@ -296,7 +359,7 @@ class Service
         }
 
         // Получаем имена и типы для структур и возвращаем результат, заодно пребразуем в массив
-        return self::convertCollectionToArray(self::getNamesForStructures($NavigationStructures));
+        return self::convertCollectionToArray(self::getNamesForStructures($NavigationStructures, $structureFittings));
     }
 
     // Возвращает список всех структур с доком
@@ -304,6 +367,10 @@ class Service
     static public function getDockingStructuresInSpace($CorporationsIds = []) {
         // Сначала получаем все навигационные структуры в космосе
         $dockingStructures = self::getRowDockingStructuresInSpace($CorporationsIds);
+
+        $structureFittings = self::getStructureFittingsByIds(
+            $dockingStructures->pluck('item_id')->unique()->values()->toArray()
+        );
 
         // Получаем полный список всего топлива
         $fuels = self::getFuels();
@@ -314,7 +381,7 @@ class Service
         }
 
         // Получаем имена и типы для структур и возвращаем результат, заодно преобразуем в массив
-        return self::convertCollectionToArray(self::getNamesForStructures($dockingStructures));
+        return self::convertCollectionToArray(self::getNamesForStructures($dockingStructures, $structureFittings));
     }
 
     /**
@@ -333,7 +400,11 @@ class Service
 
         // Получаем все метеноксы в космосе
         $metenoxStructures = self::getRowMetenoxStructuresInSpace($corporationIds);
-        
+
+        $structureFittings = self::getStructureFittingsByIds(
+            $metenoxStructures->pluck('item_id')->unique()->values()->toArray()
+        );
+
         // Получаем полный список всего топлива
         $fuels = self::getFuels();
 
@@ -380,7 +451,7 @@ class Service
         }
 
         // Получаем имена и типы для структур и возвращаем результат
-        return self::convertCollectionToArray(self::getNamesForStructures($metenoxStructures));
+        return self::convertCollectionToArray(self::getNamesForStructures($metenoxStructures, $structureFittings));
     }
 
     // Ищет и возвращает элемент массива типов по идентификатору
