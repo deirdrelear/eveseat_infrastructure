@@ -23,7 +23,7 @@
                 <td>{{ $dockingStructure->solarSystem->name }}</td>
                 <td>{{ optional(optional($dockingStructure->solarSystem)->region)->name }}</td>
                 <td>{{ $dockingStructure->corporation->name }}</td>
-                <td>
+                <td data-order="{{ $dockingStructure->fuel_block_quantity ?? 0 }}">
                     @foreach($dockingStructure->fuels as $fuel)
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach

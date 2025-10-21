@@ -33,7 +33,7 @@
                 <td>{{ $miningStructure->nearest_moon }}</td>
                 <td>{{ optional(optional($miningStructure->solarSystem)->region)->name }}</td>
                 <td>{{ $miningStructure->corporation->name }}</td>
-                <td>
+                <td data-order="{{ $miningStructure->fuel_block_quantity ?? 0 }}">
                     @foreach($miningStructure->fuels as $fuel)
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach

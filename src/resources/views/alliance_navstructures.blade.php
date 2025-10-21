@@ -23,7 +23,7 @@
                 <td>{{ $navigationStructure->solarSystem->name }}</td>
                 <td>{{ optional(optional($navigationStructure->solarSystem)->region)->name }}</td>
                 <td>{{ $navigationStructure->corporation->name }}</td>
-                <td>
+                <td data-order="{{ $navigationStructure->fuel_block_quantity ?? 0 }}">
                     @foreach($navigationStructure->fuels as $fuel)
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach
