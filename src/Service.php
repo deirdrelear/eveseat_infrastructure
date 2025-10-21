@@ -335,7 +335,6 @@ class Service
                 }
             }
             $fueledStructure->fuel_block_quantity = $fuelBlockQuantity;
-            $fueledStructure->fitting_items = $structureFittings[$fueledStructure->item_id] ?? [];
         }
 
         return $fueledStructures;
