@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 class Service
 {
     const FUEL_TYPES_ID_LIST = [16273, 4247, 4312, 4051, 4246, 81143, 81144];
+    const FUEL_BLOCK_TYPE_IDS = [4051, 4246, 4247, 4312];
+    const MAGMATIC_GAS_TYPE_ID = 81143;
     const DOCKING_STRUCTURES_TYPES_ID_LIST = [35835, 35836, 35825, 35826, 35827, 35832, 35833, 35834, 47512, 47513, 47514, 47515, 47516];
     const NAVIGATION_STRUCTURES_TYPES_ID_LIST = [35841, 35840, 37534];
     const METENOX_STRUCTURES_TYPES_ID_LIST = [81826];
@@ -266,9 +268,14 @@ class Service
             $fueledStructure->structure_type = self::findTypeById($fueledStructure->type_id, $types);
             $fueledStructure->corporation = self::findCorporationById($fueledStructure->corporation_id, $corporations);
             $fueledStructure->solarSystem =  self::findSolarSystemById($fueledStructure->location_id, $solarSystems);
+            $fuelBlockQuantity = 0;
             foreach ($fueledStructure->fuels as &$fuel) {
                 $fuel->fuel_type = self::findTypeById($fuel->type_id, $types);
+                if ($fuel->fuel_type && in_array($fuel->fuel_type->typeID, self::FUEL_BLOCK_TYPE_IDS, true)) {
+                    $fuelBlockQuantity += $fuel->quantity;
+                }
             }
+            $fueledStructure->fuel_block_quantity = $fuelBlockQuantity;
         }
 
         return $fueledStructures;
@@ -420,6 +427,18 @@ class Service
         return null;
     }
 
+    // Ищет и возвращает элемент массива регионов по идентификатору
+    static public function findRegionById($id, $regions)
+    {
+        foreach ($regions as $region) {
+            if ($region->region_id == $id) {
+                return $region;
+            }
+        }
+
+        return null;
+    }
+
     // Возвращает список типов по идентификаторам
     static public function getTypesByIds(array $ids) {
         return DB::table('invTypes')
@@ -473,8 +492,34 @@ class Service
 
     // Возвращает имена солнечных систем по идентификаторам
     static private function getSolarSystems($ids) {
-        return DB::table('solar_systems')
+        $solarSystems = DB::table('solar_systems')
             ->whereIn('system_id', $ids)
+            ->get();
+
+        $regionIds = [];
+        foreach ($solarSystems as $solarSystem) {
+            if (!is_null($solarSystem->region_id)) {
+                $regionIds[] = $solarSystem->region_id;
+            }
+        }
+
+        $regionIds = array_unique($regionIds);
+        $regions = count($regionIds) > 0
+            ? self::getRegionsByIds($regionIds)
+            : [];
+
+        foreach ($solarSystems as $solarSystem) {
+            $solarSystem->region = self::findRegionById($solarSystem->region_id, $regions);
+        }
+
+        return $solarSystems;
+    }
+
+    // Возвращает список регионов по идентификаторам
+    static private function getRegionsByIds(array $ids)
+    {
+        return DB::table('regions')
+            ->whereIn('region_id', $ids)
             ->get();
     }
 
@@ -655,15 +700,14 @@ class Service
         $total_profit = $refined_value[0]->total_value;
 
         // Расчет стоимости топлива
-        $fuel_block_ids = [4051, 4246, 4247, 4312]; // ID типов фуел блоков
         $fuel_block_prices = DB::table('market_prices')
-            ->whereIn('type_id', $fuel_block_ids)
+            ->whereIn('type_id', self::FUEL_BLOCK_TYPE_IDS)
             ->pluck('average_price', 'type_id');
 
         $cheapest_fuel_block_price = $fuel_block_prices->min();
 
         $magmatic_gas_price = DB::table('market_prices')
-            ->where('type_id', 81143) // ID магматического газа
+            ->where('type_id', self::MAGMATIC_GAS_TYPE_ID) // ID магматического газа
             ->value('average_price');
 
         $fuel_block_cost = $cheapest_fuel_block_price * 5 * $hours_per_month;
@@ -683,8 +727,8 @@ class Service
 
     public static function calculateShutdownDate($miningStructure)
     {
-        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312])->sum('quantity');
-        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', 81143)->first()->quantity ?? 0;
+        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', self::FUEL_BLOCK_TYPE_IDS)->sum('quantity');
+        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', self::MAGMATIC_GAS_TYPE_ID)->first()->quantity ?? 0;
         $fuelBlockHours = floor($fuelBlocks / 5);
         $magmaticGasHours = floor($magmaticGas / 88);
         
@@ -702,8 +746,8 @@ class Service
         $currentDate = now();
         $hoursUntilTarget = $currentDate->diffInHours($targetDate);
 
-        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', [4051, 4246, 4247, 4312])->sum('quantity');
-        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', 81143)->first()->quantity ?? 0;
+        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', self::FUEL_BLOCK_TYPE_IDS)->sum('quantity');
+        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', self::MAGMATIC_GAS_TYPE_ID)->first()->quantity ?? 0;
 
         $requiredFuelBlocks = max(0, ($hoursUntilTarget * 5) - $fuelBlocks);
         $requiredMagmaticGas = max(0, ($hoursUntilTarget * 88) - $magmaticGas);

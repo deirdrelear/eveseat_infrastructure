@@ -10,6 +10,7 @@
             <th scope="col">Structure Type</th>
             <th scope="col">Name</th>
             <th scope="col">Solar System</th>
+            <th scope="col">Region</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
         </tr>
@@ -20,8 +21,9 @@
                 <td>{{ $navigationStructure->structure_type->typeName }}</td>
                 <td>{{ $navigationStructure->name }}</td>
                 <td>{{ $navigationStructure->solarSystem->name }}</td>
+                <td>{{ optional(optional($navigationStructure->solarSystem)->region)->name }}</td>
                 <td>{{ $navigationStructure->corporation->name }}</td>
-                <td>
+                <td data-order="{{ $navigationStructure->fuel_block_quantity ?? 0 }}">
                     @foreach($navigationStructure->fuels as $fuel)
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach

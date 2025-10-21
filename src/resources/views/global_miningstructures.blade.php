@@ -15,6 +15,7 @@
             <th scope="col">Name</th>
             <th scope="col">State</th>
             <th scope="col">Moon</th>
+            <th scope="col">Region</th>
             <th scope="col">Corporation</th>
             <th scope="col">Fuel</th>
             <th scope="col">Profit</th>
@@ -27,8 +28,9 @@
                 <td>{{ $miningStructure->name }}</td>
                 <td>{{ $miningStructure->state }}</td>
                 <td>{{ $miningStructure->nearest_moon }}</td>
+                <td>{{ optional(optional($miningStructure->solarSystem)->region)->name }}</td>
                 <td>{{ $miningStructure->corporation->name }}</td>
-                <td>
+                <td data-order="{{ $miningStructure->fuel_block_quantity ?? 0 }}">
                     @foreach($miningStructure->fuels as $fuel)
                         {{ $fuel->fuel_type->typeName }} - {{ $fuel->quantity }}<br>
                     @endforeach
