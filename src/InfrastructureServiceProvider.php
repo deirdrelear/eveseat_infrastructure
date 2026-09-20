@@ -22,7 +22,7 @@ class InfrastructureServiceProvider extends AbstractSeatPlugin
 
     public function getPackageRepositoryUrl(): string
     {
-        return 'https://github.com/deirdrelear/eveseat_infrastructure';
+        return 'https://github.com/deirdrelear/eveseat-infrastructure';
     }
 
     public function register()
