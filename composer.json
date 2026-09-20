@@ -38,6 +38,10 @@
     "scripts": {
         "post-autoload-dump": [
             "@php -r \"file_exists('artisan') && passthru('php artisan package:discover --ansi');\""
-        ]
+        ],
+        "test": "phpunit tests"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
     }
 }
