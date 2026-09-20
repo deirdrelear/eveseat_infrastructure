@@ -29,5 +29,8 @@ jobs:
         run: |
           find src -name '*.php' -print0 | xargs -0 -n1 php -l
 
+      - name: Run regression tests
+        run: vendor/bin/phpunit tests
+
       - name: Optimise autoloader
         run: composer dump-autoload -o
