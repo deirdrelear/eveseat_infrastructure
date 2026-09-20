@@ -32,12 +32,21 @@ class InfrastructureGlobalController extends Controller
         return view("infrastructure::global_dockstructures", ['dockingStructures' => $dockingStructures]);
     }
 
-    public function miningstructures() {
-        // Получаем список всех метеноксов
-        $miningStructures = Service::getMetenoxStructuresInSpace();
+    public function miningstructures(Request $request) {
+        $validated = $request->validate([
+            'target_date' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:today'],
+        ]);
 
-        // выводим шаблон
-        return view("infrastructure::global_miningstructures", ['miningStructures' => $miningStructures]);
-    }
+        $targetDate = isset($validated['target_date'])
+            ? Carbon::createFromFormat('Y-m-d', $validated['target_date'])->startOfDay()
+            : now()->addMonth()->startOfDay();
+
+        $miningStructures = Service::getMetenoxStructuresInSpace([], $targetDate);
+
+        return view("infrastructure::global_miningstructures", [
+            'miningStructures' => $miningStructures,
+            'targetDate' => $targetDate,
+        ]);
+
 
 }
