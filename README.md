@@ -13,7 +13,7 @@ Infrastructure management plugin for [SeAT](https://github.com/eveseat) v5.
 1. Tell Composer where to find the repository (for private installs):
 
    ```bash
-   composer config repositories.eveseat-infrastructure vcs https://github.com/deirdrelear/eveseat_infrastructure
+   composer config repositories.eveseat-infrastructure vcs https://github.com/deirdrelear/eveseat-infrastructure
    ```
 
 2. Install the plugin via Composer:
