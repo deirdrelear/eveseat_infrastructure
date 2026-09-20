@@ -55,19 +55,22 @@ class InfrastructureAllianceController extends Controller
 
     public function miningstructures(Request $request)
     {
+        $validated = $request->validate([
+            'target_date' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:today'],
+        ]);
+
+        $targetDate = isset($validated['target_date'])
+            ? Carbon::createFromFormat('Y-m-d', $validated['target_date'])->startOfDay()
+            : now()->addMonth()->startOfDay();
+
         $userCorporationsIds = Service::getUserCorporationsIds();
         $allianceCorporationsIds = Service::getAllianceCorporationsIds($userCorporationsIds);
-
-        $targetDate = $request->input('target_date') 
-            ? Carbon::parse($request->input('target_date')) 
-            : now()->addMonth();
-
         $miningStructures = Service::getMetenoxStructuresInSpace($allianceCorporationsIds, $targetDate);
 
         return view("infrastructure::alliance_miningstructures", [
             'miningStructures' => $miningStructures,
-            'targetDate' => $targetDate
+            'targetDate' => $targetDate,
         ]);
-    }
+
 
 }
