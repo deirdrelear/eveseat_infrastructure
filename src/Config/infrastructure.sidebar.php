@@ -18,7 +18,7 @@ return [
                 'name'  => 'Corporations Navigation Structures',
                 'icon'  => 'fas fa-info',
                 'route' => 'infrastructure.corporation_navstructures',
-                'permission' => 'infrastructure.infrastructure',
+                'permission' => 'infrastructure.corporation',
             ],
             [
                 'name'  => 'Corporations IHubs',
