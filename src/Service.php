@@ -17,6 +17,11 @@ class Service
     const METENOX_STRUCTURES_TYPES_ID_LIST = [81826];
     const STRUCTURE_FITTING_EXCLUDED_FLAGS = ['StructureFuel'];
 
+    const METENOX_BASE_DRILLING_VOLUME = 30000;
+    const METENOX_EXTRACTION_EFFICIENCY = 0.40;
+    const METENOX_FUEL_BLOCKS_PER_HOUR = 5;
+    const METENOX_MAGMATIC_GAS_PER_HOUR = 200;
+
     // Возвращает все корпорации, в которых состоят альты пользователя
     static public function getUserCorporationsIds() {
         // Сначала получаем идентификаторы персонажей, связанных с текущим пользователем.
@@ -69,9 +74,15 @@ class Service
     }
 
     // Возвращает полный список всех апгрейдов в iBub'ах
-    static private function getIHubUpgrades() {
+    static private function getIHubUpgrades(array $iHubIds) {
+        if (count($iHubIds) === 0) {
+            return collect();
+        }
+
         return DB::table('corporation_assets')
-            ->where('location_flag', '=', 'StructureActive')
+            ->whereIn('location_id', $iHubIds)
+            ->where('location_flag', 'like', 'Structure%')
+            ->whereNotIn('type_id', self::FUEL_TYPES_ID_LIST)
             ->get();
     }
 
@@ -103,8 +114,10 @@ class Service
         // Получаем информацию о хабах в сыром виде
         $rowIHubs = self::getRowIHubsInSpace($CorporationsIds);
 
-        // Теперь получаем полный список всех апгрейдов для IHub
-        $iHubsUpgrades = self::getIHubUpgrades();
+        // Получаем апгрейды только для найденных хабов. Берём все Structure*
+        // состояния, чтобы видеть также установленные, но неактивные апгрейды.
+        $iHubIds = $rowIHubs->pluck('item_id')->unique()->values()->toArray();
+        $iHubsUpgrades = self::getIHubUpgrades($iHubIds);
 
         // Теперь получаем все имена: солнечных систем, апгрейдов, корпораций
         // Теперь находим имена корпораций и типов структур
@@ -154,7 +167,10 @@ class Service
 
             // сортируем список апргрейдов по алфавиту
             usort($rowIHub->upgrades, function($upgrade1, $upgrade2) {
-                return strcmp($upgrade1->upgrade_type->typeName, $upgrade2->upgrade_type->typeName);
+                return strcmp(
+                    $upgrade1->upgrade_type->typeName ?? '',
+                    $upgrade2->upgrade_type->typeName ?? ''
+                );
             });
 
             $fittingItems = [];
@@ -222,12 +238,16 @@ class Service
 
     }
 
-    // Возвращает топливо, которое лежит в структурах
-    static private function getFuels() {
-        return DB::table('corporation_assets')
-            //->where('location_type', '=', 'solar_system')
-            ->whereIn('type_id', self::FUEL_TYPES_ID_LIST)
-            ->get();
+    // Возвращает топливо, которое лежит в заданных структурах
+    static private function getFuels(array $structureIds = []) {
+        $query = DB::table('corporation_assets')
+            ->whereIn('type_id', self::FUEL_TYPES_ID_LIST);
+
+        if (count($structureIds) > 0) {
+            $query->whereIn('location_id', $structureIds);
+        }
+
+        return $query->get();
     }
 
     // Ищет топливо, которое лежит в конкретной структуре
@@ -335,6 +355,7 @@ class Service
                 }
             }
             $fueledStructure->fuel_block_quantity = $fuelBlockQuantity;
+            $fueledStructure->fitting_items = $structureFittings[$fueledStructure->item_id] ?? [];
         }
 
         return $fueledStructures;
@@ -346,12 +367,11 @@ class Service
         // Сначала получаем все навигационные структуры в космосе
         $NavigationStructures = self::getRowNavigationStructuresInSpace($CorporationsIds);
 
-        $structureFittings = self::getStructureFittingsByIds(
-            $NavigationStructures->pluck('item_id')->unique()->values()->toArray()
-        );
+        $structureIds = $NavigationStructures->pluck('item_id')->unique()->values()->toArray();
+        $structureFittings = self::getStructureFittingsByIds($structureIds);
 
-        // Получаем полный список всего топлива
-        $fuels = self::getFuels();
+        // Получаем топливо только для найденных структур
+        $fuels = self::getFuels($structureIds);
 
         // Добавляем каждое топливо в свою структуру
         foreach ($NavigationStructures as &$NavigationStructure) {
@@ -368,12 +388,11 @@ class Service
         // Сначала получаем все навигационные структуры в космосе
         $dockingStructures = self::getRowDockingStructuresInSpace($CorporationsIds);
 
-        $structureFittings = self::getStructureFittingsByIds(
-            $dockingStructures->pluck('item_id')->unique()->values()->toArray()
-        );
+        $structureIds = $dockingStructures->pluck('item_id')->unique()->values()->toArray();
+        $structureFittings = self::getStructureFittingsByIds($structureIds);
 
-        // Получаем полный список всего топлива
-        $fuels = self::getFuels();
+        // Получаем топливо только для найденных структур
+        $fuels = self::getFuels($structureIds);
 
         // Добавляем каждое топливо в свою структуру
         foreach ($dockingStructures as &$dockingStructure) {
@@ -401,12 +420,11 @@ class Service
         // Получаем все метеноксы в космосе
         $metenoxStructures = self::getRowMetenoxStructuresInSpace($corporationIds);
 
-        $structureFittings = self::getStructureFittingsByIds(
-            $metenoxStructures->pluck('item_id')->unique()->values()->toArray()
-        );
+        $structureIds = $metenoxStructures->pluck('item_id')->unique()->values()->toArray();
+        $structureFittings = self::getStructureFittingsByIds($structureIds);
 
-        // Получаем полный список всего топлива
-        $fuels = self::getFuels();
+        // Получаем топливо только для найденных Metenox
+        $fuels = self::getFuels($structureIds);
 
         // Добавляем каждое топливо в свою структуру
         foreach ($metenoxStructures as &$metenoxStructure) {
@@ -704,7 +722,12 @@ class Service
             ->where('item_id', $structure_id)
             ->first();
 
-        if (!$structure) {
+        if (
+            !$structure ||
+            is_null($structure->x) ||
+            is_null($structure->y) ||
+            is_null($structure->z)
+        ) {
             return null;
         }
 
@@ -723,6 +746,10 @@ class Service
         $min_distance = PHP_FLOAT_MAX;
 
         foreach ($moons as $moon) {
+            if (is_null($moon->x) || is_null($moon->y) || is_null($moon->z)) {
+                continue;
+            }
+
             $distance = sqrt(
                 pow($moon->x - $structure->x, 2) +
                 pow($moon->y - $structure->y, 2) +
@@ -734,6 +761,7 @@ class Service
                 $nearest_moon = $moon;
             }
         }
+
         return $nearest_moon;
     }
     
@@ -745,88 +773,137 @@ class Service
      */
     static public function calculateProfit(int $moon_id): ?array
     {
-        $mining_volume = 30000; // 30000 m3 в час
-        $reprocessing_yield = 40; // 40% эффективность переработки
-        $hours_per_month = date('t') * 24; // Количество часов в текущем месяце
+        $hoursPerMonth = now()->daysInMonth * 24;
 
-        $refined_value = DB::select("
-            SELECT 
+        // universe_moon_contents.rate is stored as a fraction (0.25 == 25%).
+        // Apply Metenox's 40% extraction efficiency once; do not divide rate by 100 again.
+        $refinedValue = DB::select("
+            SELECT
                 SUM(
-                FLOOR(umc.rate * ? * ? / umc_type.volume / 100) * 
-                itm.quantity * 
-                ? * 
-                mp.average_price
-            ) AS total_value
-        FROM universe_moon_contents umc
-        JOIN invTypes umc_type ON umc.type_id = umc_type.typeID
-        JOIN invTypeMaterials itm ON umc_type.typeID = itm.typeID
-        JOIN market_prices mp ON itm.materialTypeID = mp.type_id
-        WHERE umc.moon_id = ?
-        ", [$mining_volume, $hours_per_month, $reprocessing_yield / 100, $moon_id]);
+                    (
+                        SELECT SUM(itm.quantity * mp.average_price)
+                        FROM invTypeMaterials itm
+                        JOIN market_prices mp ON mp.type_id = itm.materialTypeID
+                        WHERE itm.typeID = umc.type_id
+                    )
+                    * umc.rate
+                    * ?
+                    * ?
+                    / NULLIF(umc_type.volume, 0)
+                    * ?
+                ) AS total_value
+            FROM universe_moon_contents umc
+            JOIN invTypes umc_type ON umc.type_id = umc_type.typeID
+            WHERE umc.moon_id = ?
+        ", [
+            self::METENOX_BASE_DRILLING_VOLUME,
+            $hoursPerMonth,
+            self::METENOX_EXTRACTION_EFFICIENCY,
+            $moon_id,
+        ]);
 
-        if (empty($refined_value) || $refined_value[0]->total_value === null) {
-            return null;  // Возвращаем null, если данных о составе луны нет или расчет не удался
+        if (empty($refinedValue) || $refinedValue[0]->total_value === null) {
+            return null;
         }
 
-        $total_profit = $refined_value[0]->total_value;
-
-        // Расчет стоимости топлива
-        $fuel_block_prices = DB::table('market_prices')
+        $fuelBlockPrices = DB::table('market_prices')
             ->whereIn('type_id', self::FUEL_BLOCK_TYPE_IDS)
             ->pluck('average_price', 'type_id');
 
-        $cheapest_fuel_block_price = $fuel_block_prices->min();
-
-        $magmatic_gas_price = DB::table('market_prices')
-            ->where('type_id', self::MAGMATIC_GAS_TYPE_ID) // ID магматического газа
+        $cheapestFuelBlockPrice = $fuelBlockPrices->min();
+        $magmaticGasPrice = DB::table('market_prices')
+            ->where('type_id', self::MAGMATIC_GAS_TYPE_ID)
             ->value('average_price');
 
-        $fuel_block_cost = $cheapest_fuel_block_price * 5 * $hours_per_month;
-        $magmatic_gas_cost = $magmatic_gas_price * 88 * $hours_per_month;
+        if (is_null($cheapestFuelBlockPrice) || is_null($magmaticGasPrice)) {
+            return null;
+        }
 
-        $total_fuel_cost = $fuel_block_cost + $magmatic_gas_cost;
-
-        // Вычитаем стоимость топлива из общей прибыли
-        $net_profit = $total_profit - $total_fuel_cost;
+        $grossProfit = (float) $refinedValue[0]->total_value;
+        $fuelCost =
+            ((float) $cheapestFuelBlockPrice * self::METENOX_FUEL_BLOCKS_PER_HOUR * $hoursPerMonth) +
+            ((float) $magmaticGasPrice * self::METENOX_MAGMATIC_GAS_PER_HOUR * $hoursPerMonth);
 
         return [
-        'gross_profit' => $total_profit,
-        'fuel_cost' => $total_fuel_cost,
-        'net_profit' => $net_profit
+            'gross_profit' => $grossProfit,
+            'fuel_cost' => $fuelCost,
+            'net_profit' => $grossProfit - $fuelCost,
+        ];
+    }
+
+    public static function calculateMetenoxOreUnits(float $rate, float $oreVolume, int $hours): float
+    {
+        if ($rate <= 0 || $oreVolume <= 0 || $hours <= 0) {
+            return 0.0;
+        }
+
+        return $rate * self::METENOX_BASE_DRILLING_VOLUME * $hours / $oreVolume;
+    }
+
+    public static function calculateMetenoxRunwayHours(int $fuelBlocks, int $magmaticGas): array
+    {
+        return [
+            'fuelBlocks' => intdiv(max(0, $fuelBlocks), self::METENOX_FUEL_BLOCKS_PER_HOUR),
+            'magmaticGas' => intdiv(max(0, $magmaticGas), self::METENOX_MAGMATIC_GAS_PER_HOUR),
+        ];
+    }
+
+    public static function calculateMetenoxRequiredFuelQuantities(
+        int $fuelBlocks,
+        int $magmaticGas,
+        int $hours
+    ): array {
+        $hours = max(0, $hours);
+
+        return [
+            'fuelBlocks' => max(
+                0,
+                ($hours * self::METENOX_FUEL_BLOCKS_PER_HOUR) - max(0, $fuelBlocks)
+            ),
+            'magmaticGas' => max(
+                0,
+                ($hours * self::METENOX_MAGMATIC_GAS_PER_HOUR) - max(0, $magmaticGas)
+            ),
         ];
     }
 
     public static function calculateShutdownDate($miningStructure)
     {
-        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', self::FUEL_BLOCK_TYPE_IDS)->sum('quantity');
-        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', self::MAGMATIC_GAS_TYPE_ID)->first()->quantity ?? 0;
-        $fuelBlockHours = floor($fuelBlocks / 5);
-        $magmaticGasHours = floor($magmaticGas / 88);
-        
-        $fuelBlockShutdownDate = now()->addHours($fuelBlockHours)->startOfHour();
-        $magmaticGasShutdownDate = now()->addHours($magmaticGasHours)->startOfHour();
-        
+        $fuelBlocks = (int) collect($miningStructure->fuels)
+            ->whereIn('fuel_type.typeID', self::FUEL_BLOCK_TYPE_IDS)
+            ->sum('quantity');
+        $magmaticGasItem = collect($miningStructure->fuels)
+            ->where('fuel_type.typeID', self::MAGMATIC_GAS_TYPE_ID)
+            ->first();
+        $magmaticGas = (int) ($magmaticGasItem->quantity ?? 0);
+        $runway = self::calculateMetenoxRunwayHours($fuelBlocks, $magmaticGas);
+
         return [
-            'fuelBlock' => $fuelBlockShutdownDate,
-            'magmaticGas' => $magmaticGasShutdownDate
+            'fuelBlock' => now()->addHours($runway['fuelBlocks'])->startOfHour(),
+            'magmaticGas' => now()->addHours($runway['magmaticGas'])->startOfHour(),
         ];
     }
 
     public static function calculateRequiredFuel($miningStructure, $targetDate)
     {
         $currentDate = now();
-        $hoursUntilTarget = $currentDate->diffInHours($targetDate);
+        $hoursUntilTarget = $currentDate->lt($targetDate)
+            ? $currentDate->diffInHours($targetDate)
+            : 0;
 
-        $fuelBlocks = collect($miningStructure->fuels)->whereIn('fuel_type.typeID', self::FUEL_BLOCK_TYPE_IDS)->sum('quantity');
-        $magmaticGas = collect($miningStructure->fuels)->where('fuel_type.typeID', self::MAGMATIC_GAS_TYPE_ID)->first()->quantity ?? 0;
+        $fuelBlocks = (int) collect($miningStructure->fuels)
+            ->whereIn('fuel_type.typeID', self::FUEL_BLOCK_TYPE_IDS)
+            ->sum('quantity');
+        $magmaticGasItem = collect($miningStructure->fuels)
+            ->where('fuel_type.typeID', self::MAGMATIC_GAS_TYPE_ID)
+            ->first();
+        $magmaticGas = (int) ($magmaticGasItem->quantity ?? 0);
 
-        $requiredFuelBlocks = max(0, ($hoursUntilTarget * 5) - $fuelBlocks);
-        $requiredMagmaticGas = max(0, ($hoursUntilTarget * 88) - $magmaticGas);
-
-        return [
-            'fuelBlocks' => $requiredFuelBlocks,
-            'magmaticGas' => $requiredMagmaticGas
-        ];
+        return self::calculateMetenoxRequiredFuelQuantities(
+            $fuelBlocks,
+            $magmaticGas,
+            $hoursUntilTarget
+        );
     }
 
 }
