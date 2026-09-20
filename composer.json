@@ -3,7 +3,7 @@
     "description": "Infrastructure manager",
     "type": "seat-plugin",
     "license": "MIT",
-    "homepage": "https://github.com/deirdrelear/eveseat_infrastructure",
+    "homepage": "https://github.com/deirdrelear/eveseat-infrastructure",
     "authors": [
         {
             "name": "deirdrelear",
@@ -11,8 +11,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/deirdrelear/eveseat_infrastructure/issues",
-        "source": "https://github.com/deirdrelear/eveseat_infrastructure"
+        "issues": "https://github.com/deirdrelear/eveseat-infrastructure/issues",
+        "source": "https://github.com/deirdrelear/eveseat-infrastructure"
     },
     "autoload": {
         "psr-4": {
